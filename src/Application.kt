@@ -1,13 +1,10 @@
 package com.public.poll
 
 import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
+import io.ktor.server.tomcat.EngineMain
 
-fun main(args: Array<String>): Unit = io.ktor.server.tomcat.EngineMain.main(args)
+fun main(args: Array<String>) = EngineMain.main(args)
 
-@Suppress("unused") // Referenced in application.conf
+@Suppress("unused")
 @kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
-}
-
+fun Application.module(testing: Boolean = false) = Unit
