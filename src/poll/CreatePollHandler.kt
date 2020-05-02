@@ -1,4 +1,4 @@
-package com.public.poll.poll.create
+package com.public.poll.poll
 
 import com.public.poll.dao.PollDao
 import com.public.poll.dto.CreatedPollDto

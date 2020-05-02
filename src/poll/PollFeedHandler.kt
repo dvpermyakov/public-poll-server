@@ -1,4 +1,4 @@
-package com.public.poll.poll.feed
+package com.public.poll.poll
 
 import com.public.poll.dao.PollDao
 import com.public.poll.dto.PollDto
@@ -9,11 +9,11 @@ class PollFeedHandler {
 
     fun handle(): PollFeedDto {
         return transaction {
-            val items = PollDao.all().map { item ->
+            val items = PollDao.all().map { poll ->
                 PollDto(
-                    id = item.id.value.toString(),
-                    question = item.question,
-                    answers = item.answers.split(";")
+                    id = poll.id.value.toString(),
+                    question = poll.question,
+                    answers = poll.answers.split(";")
                 )
             }
             PollFeedDto(items = items)

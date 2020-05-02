@@ -1,8 +1,9 @@
 package com.public.poll
 
 import com.public.poll.dto.CreatedPollDto
-import com.public.poll.poll.create.CreatePollHandler
-import com.public.poll.poll.feed.PollFeedHandler
+import com.public.poll.poll.CreatePollHandler
+import com.public.poll.poll.GetPollHandler
+import com.public.poll.poll.PollFeedHandler
 import com.public.poll.table.PollTable
 import com.public.poll.table.UserTable
 import io.ktor.application.call
@@ -13,6 +14,7 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.DefaultJsonConfiguration
 import io.ktor.serialization.json
@@ -41,14 +43,24 @@ fun main() {
         createTables()
 
         routing {
-            get("/api/poll/feed") {
-                val handler = PollFeedHandler()
-                call.respond(handler.handle())
-            }
-            post("/api/poll/create") {
-                val createdPollDto = call.receive<CreatedPollDto>()
-                val handler = CreatePollHandler()
-                call.respond(handler.handle(createdPollDto))
+            route("/api/poll") {
+
+                get("/feed") {
+                    val handler = PollFeedHandler()
+                    call.respond(handler.handle())
+                }
+
+                get("/get/{pollId}") {
+                    val handler = GetPollHandler()
+                    val pollId = requireNotNull(call.parameters["pollId"])
+                    call.respond(handler.handle(pollId))
+                }
+
+                post("/create") {
+                    val createdPollDto = call.receive<CreatedPollDto>()
+                    val handler = CreatePollHandler()
+                    call.respond(handler.handle(createdPollDto))
+                }
             }
         }
     }
