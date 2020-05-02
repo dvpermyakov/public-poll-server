@@ -6,9 +6,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class GetPollHandler {
 
-    fun handle(id: String): PollDto {
+    fun handle(pollId: String): PollDto {
         return transaction {
-            val poll = PollDao.findById(id.toInt())
+            val poll = PollDao.findById(pollId.toInt())
             if (poll != null) {
                 PollDto(
                     id = poll.id.value.toString(),

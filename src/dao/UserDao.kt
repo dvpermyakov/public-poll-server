@@ -9,5 +9,6 @@ class UserDao(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<UserDao>(UserTable)
 
     var name by UserTable.name
+    var password by UserTable.password
     var email by UserTable.email
 }
