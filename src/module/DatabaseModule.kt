@@ -1,7 +1,6 @@
 package com.public.poll.module
 
-import com.public.poll.table.PollTable
-import com.public.poll.table.UserTable
+import com.public.poll.table.*
 import io.ktor.application.Application
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -18,7 +17,16 @@ fun Application.databaseModule() {
     )
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(UserTable)
+
+        SchemaUtils.create(PollAnswerTable)
+        SchemaUtils.create(PollDislikeTable)
+        SchemaUtils.create(PollEngagementTable)
+        SchemaUtils.create(PollLikeTable)
+        SchemaUtils.create(PollModerationResultTable)
+        SchemaUtils.create(PollReportTable)
         SchemaUtils.create(PollTable)
+        SchemaUtils.create(PollVoteTable)
+        SchemaUtils.create(UserTable)
+
     }
 }

@@ -11,9 +11,7 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.Principal
 import io.ktor.auth.basic
-import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
-import io.ktor.response.respond
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.routing.routing
@@ -39,26 +37,16 @@ fun Application.authModule() {
 
     routing {
         route("/api") {
-
             route("/auth") {
-                post("/signin") {
-                    val token = call.receive<TokenDto>()
-                    val user = SignInHandler().handle(token)
-                    if (user != null) {
-                        call.respond(user)
-                    } else {
-                        call.respond(HttpStatusCode.BadRequest)
-                    }
-                }
 
                 post("/signup") {
                     val token = call.receive<TokenDto>()
-                    val user = SignUpHandler().handle(token)
-                    if (user != null) {
-                        call.respond(user)
-                    } else {
-                        call.respond(HttpStatusCode.BadRequest)
-                    }
+                    call.commonRespond(SignUpHandler().handle(token))
+                }
+
+                post("/signin") {
+                    val token = call.receive<TokenDto>()
+                    call.commonRespond(SignInHandler().handle(token))
                 }
             }
         }

@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class CreatedPollDto(
     val question: String,
     val answers: List<String>
-)
+) : Dto

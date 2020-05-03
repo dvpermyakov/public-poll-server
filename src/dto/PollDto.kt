@@ -12,4 +12,4 @@ data class PollDto(
     val participantRequired: Int,
     val likeCount: Long,
     val dislikeCount: Long
-)
+) : Dto

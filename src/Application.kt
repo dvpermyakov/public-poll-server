@@ -1,5 +1,8 @@
 package com.public.poll
 
+import com.public.poll.module.authModule
+import com.public.poll.module.databaseModule
+import com.public.poll.module.pollModule
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -25,6 +28,10 @@ fun main() {
                 json = Json(DefaultJsonConfiguration.copy(prettyPrint = true))
             )
         }
+
+        databaseModule()
+        authModule()
+        pollModule()
     }
 
     server.start(wait = true)
