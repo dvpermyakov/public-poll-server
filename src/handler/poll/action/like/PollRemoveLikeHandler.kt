@@ -21,16 +21,16 @@ class PollRemoveLikeHandler {
         } catch (ex: Exception) {
             return ErrorDto("PollId is invalid").toResponse()
         }
-        val pollLikeEntity = transaction {
-            PollLikeDao.find {
+        return transaction {
+            val pollLikeEntity = PollLikeDao.find {
                 (PollLikeTable.ownerId eq user.id) and (PollLikeTable.pollId eq pollUuid)
             }.firstOrNull()
-        }
-        return if (pollLikeEntity == null) {
-            ErrorDto("Like for this poll wasn't found").toResponse()
-        } else {
-            pollLikeEntity.delete()
-            CommonResponse(HttpStatusCode.OK)
+            if (pollLikeEntity == null) {
+                ErrorDto("Like for this poll wasn't found").toResponse()
+            } else {
+                pollLikeEntity.delete()
+                CommonResponse(HttpStatusCode.OK)
+            }
         }
     }
 }
