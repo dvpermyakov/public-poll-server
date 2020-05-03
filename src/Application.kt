@@ -1,13 +1,38 @@
 package com.public.poll
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
+import com.public.poll.module.authModule
+import com.public.poll.module.databaseModule
+import com.public.poll.module.pollModule
+import io.ktor.application.install
+import io.ktor.features.CallLogging
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
+import io.ktor.features.StatusPages
+import io.ktor.http.ContentType
+import io.ktor.serialization.DefaultJsonConfiguration
+import io.ktor.serialization.json
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.tomcat.Tomcat
+import kotlinx.serialization.json.Json
 
-fun main(args: Array<String>): Unit = io.ktor.server.tomcat.EngineMain.main(args)
+fun main() {
+    val server = embeddedServer(Tomcat, port = 8080) {
 
-@Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+        install(DefaultHeaders)
+        install(CallLogging)
+        install(StatusPages)
+
+        install(ContentNegotiation) {
+            json(
+                contentType = ContentType.Application.Json,
+                json = Json(DefaultJsonConfiguration.copy(prettyPrint = true))
+            )
+        }
+
+        databaseModule()
+        authModule()
+        pollModule()
+    }
+
+    server.start(wait = true)
 }
-
