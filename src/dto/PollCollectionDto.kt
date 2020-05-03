@@ -3,6 +3,6 @@ package com.public.poll.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PollFeedDto(
+data class PollCollectionDto(
     val items: List<PollDto>
 )

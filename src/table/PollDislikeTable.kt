@@ -4,10 +4,10 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.jodatime.datetime
 import org.joda.time.DateTime
+import java.util.*
 
-object UserTable : UUIDTable() {
+object PollDislikeTable : UUIDTable() {
     val created: Column<DateTime> = datetime("created")
-    val name: Column<String> = varchar("name", length = 50).uniqueIndex()
-    val password: Column<String> = text("password")
-    val email: Column<String> = varchar("email", length = 50).uniqueIndex()
+    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id)
+    val ownerId: Column<UUID> = PollTable.uuid("owner_id").references(UserTable.id)
 }

@@ -1,13 +1,18 @@
 package com.public.poll.dao
 
 import com.public.poll.table.PollTable
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import java.util.*
 
-class PollDao(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<PollDao>(PollTable)
+class PollDao(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<PollDao>(PollTable)
 
+    var created by PollTable.created
+    var updated by PollTable.updated
+    var owner by UserDao referencedOn PollTable.ownerId
+    var status by PollTable.status
     var question by PollTable.question
-    var answers by PollTable.answers
+    val participantsRequired by PollTable.participantsRequired
 }
