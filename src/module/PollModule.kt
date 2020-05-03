@@ -85,11 +85,12 @@ fun Application.pollModule() {
                         )
                     }
 
-                    post("/vote/{pollId}") {
+                    post("/vote/{pollId}/{answerId}") {
                         call.commonRespond(
                             PollVoteHandler().handle(
                                 user = call.getUser(),
-                                pollId = call.getPollId()
+                                pollId = call.getPollId(),
+                                answerId = call.getAnswerId()
                             )
                         )
                     }

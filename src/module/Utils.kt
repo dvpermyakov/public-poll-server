@@ -21,3 +21,7 @@ internal fun ApplicationCall.getUser(): UserDao {
 internal fun ApplicationCall.getPollId(): String {
     return requireNotNull(parameters["pollId"])
 }
+
+internal fun ApplicationCall.getAnswerId(): String {
+    return requireNotNull(parameters["answerId"])
+}

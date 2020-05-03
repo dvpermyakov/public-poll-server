@@ -4,11 +4,11 @@ import com.public.poll.dao.PollDao
 import com.public.poll.dao.PollLikeDao
 import com.public.poll.dao.UserDao
 import com.public.poll.dto.ErrorDto
-import com.public.poll.mapper.PollMapper
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
 import com.public.poll.table.PollLikeTable
 import com.public.poll.table.PollStatus
+import com.public.poll.utils.toUUID
 import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
@@ -17,11 +17,9 @@ import org.joda.time.DateTime
 
 class PollAddLikeHandler {
 
-    private val pollMapper = PollMapper()
-
     fun handle(user: UserDao, pollId: String): CommonResponse {
         val pollUuid = try {
-            pollMapper.map(pollId)
+            pollId.toUUID()
         } catch (ex: Exception) {
             return ErrorDto("PollId is invalid").toResponse()
         }

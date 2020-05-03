@@ -12,4 +12,5 @@ class PollVoteDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var created by PollVoteTable.created
     var poll by PollDao referencedOn PollVoteTable.pollId
     var owner by UserDao referencedOn PollVoteTable.ownerId
+    var answer by PollAnswerDao referencedOn PollVoteTable.answerId
 }

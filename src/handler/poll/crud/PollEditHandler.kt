@@ -9,16 +9,15 @@ import com.public.poll.mapper.PollMapper
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
 import com.public.poll.table.PollStatus
+import com.public.poll.utils.toUUID
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
 class PollEditHandler {
 
-    private val pollMapper = PollMapper()
-
     fun handle(user: UserDao, pollId: String, pollDto: CreatedPollDto): CommonResponse {
         val pollUuid = try {
-            pollMapper.map(pollId)
+            pollId.toUUID()
         } catch (ex: Exception) {
             return ErrorDto("PollId is invalid").toResponse()
         }
@@ -45,7 +44,7 @@ class PollEditHandler {
                                 text = answer
                             }
                         }
-                        pollMapper.map(pollEntity).toResponse()
+                        PollMapper().map(pollEntity).toResponse()
                     }
                 }
                 else -> {

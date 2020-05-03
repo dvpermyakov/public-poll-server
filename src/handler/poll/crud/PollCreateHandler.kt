@@ -20,7 +20,7 @@ class PollCreateHandler {
                 created = DateTime.now()
                 updated = DateTime.now()
                 owner = user
-                status = PollStatus.CREATED
+                status = PollStatus.APPROVED
                 question = createdPollDto.question
                 engagementRequired = 10
             }

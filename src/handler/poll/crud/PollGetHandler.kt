@@ -5,15 +5,14 @@ import com.public.poll.dto.ErrorDto
 import com.public.poll.mapper.PollMapper
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
+import com.public.poll.utils.toUUID
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class PollGetHandler {
 
-    private val pollMapper = PollMapper()
-
     fun handle(pollId: String): CommonResponse {
         val pollUuid = try {
-            pollMapper.map(pollId)
+            pollId.toUUID()
         } catch (ex: Exception) {
             return ErrorDto("PollId is invalid").toResponse()
         }
@@ -22,7 +21,7 @@ class PollGetHandler {
             if (pollEntity == null) {
                 ErrorDto("Poll wasn't found").toResponse()
             } else {
-                pollMapper.map(pollEntity).toResponse()
+                PollMapper().map(pollEntity).toResponse()
             }
         }
     }

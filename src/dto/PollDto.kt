@@ -8,7 +8,7 @@ data class PollDto(
     val id: String,
     val status: PollStatus,
     val question: String,
-    val answers: List<String>,
+    val answers: List<AnswerDto>,
     val engagementRequired: Int,
     val engagementCount: Long,
     val likeCount: Long,
