@@ -3,23 +3,33 @@ package com.public.poll.poll.crud
 import com.public.poll.dao.PollAnswerDao
 import com.public.poll.dao.PollDao
 import com.public.poll.dto.CreatedPollDto
-import com.public.poll.table.PollAnswerTable
+import com.public.poll.table.PollStatus
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.util.*
 
 class PollEditHandler {
 
-    fun handle(pollId: UUID, pollDto: CreatedPollDto) {
-        transaction {
+    fun handle(pollId: UUID, pollDto: CreatedPollDto): Boolean {
+        return transaction {
             val pollEntity = requireNotNull(PollDao.findById(pollId))
 
-            PollAnswerDao.find { PollAnswerTable.pollId eq pollId }.count()
+            if (pollEntity.status == PollStatus.CREATED) {
+                pollEntity.updated = DateTime.now()
+                pollEntity.question = pollDto.question
+                pollEntity.answers.forEach { answerEntity ->
+                    answerEntity.delete()
+                }
+                pollDto.answers.forEach { answer ->
+                    PollAnswerDao.new {
+                        poll = pollEntity
+                        text = answer
+                    }
+                }
+                return@transaction true
+            }
 
-//            pollDto.answers.forEach { answer ->
-//                AnswerDao.new {
-//                    text =
-//                }
-//            }
+            return@transaction false
         }
     }
 

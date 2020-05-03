@@ -138,18 +138,21 @@ fun main() {
                             PollGetHandler().handle(pollId = call.getPollId())?.let { pollDto ->
                                 call.respond(pollDto)
                             } ?: run {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
                         post("/edit/{pollId}") {
                             val pollDto = call.receive<CreatedPollDto>()
-                            call.respond(
-                                PollEditHandler().handle(
-                                    pollId = call.getPollId(),
-                                    pollDto = pollDto
-                                )
+                            val handled = PollEditHandler().handle(
+                                pollId = call.getPollId(),
+                                pollDto = pollDto
                             )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Accepted)
+                            } else {
+                                call.respond(HttpStatusCode.BadRequest)
+                            }
                         }
 
                         post("/engage/{pollId}") {
@@ -159,7 +162,7 @@ fun main() {
                             if (handled) {
                                 call.respond(HttpStatusCode.Created)
                             } else {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
@@ -170,7 +173,7 @@ fun main() {
                             if (handled) {
                                 call.respond(HttpStatusCode.Created)
                             } else {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
@@ -181,7 +184,7 @@ fun main() {
                             if (handled) {
                                 call.respond(HttpStatusCode.Created)
                             } else {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
@@ -192,7 +195,7 @@ fun main() {
                             if (handled) {
                                 call.respond(HttpStatusCode.Created)
                             } else {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
@@ -210,7 +213,7 @@ fun main() {
                             if (handled) {
                                 call.respond(HttpStatusCode.Created)
                             } else {
-                                call.respond(HttpStatusCode.NotFound)
+                                call.respond(HttpStatusCode.BadRequest)
                             }
                         }
 
