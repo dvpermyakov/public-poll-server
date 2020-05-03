@@ -8,6 +8,6 @@ import java.util.*
 
 object PollEngagementTable : UUIDTable() {
     val created: Column<DateTime> = datetime("created")
-    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id)
+    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id).index()
     val ownerId: Column<UUID> = PollTable.uuid("owner_id").references(UserTable.id)
 }

@@ -8,7 +8,7 @@ import java.util.*
 
 object PollModerationResultTable : UUIDTable() {
     val created: Column<DateTime> = datetime("created")
-    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id)
+    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id).index()
     val approved: Column<Boolean> = bool("approved")
     val reason: Column<String?> = text("reason").nullable()
 }

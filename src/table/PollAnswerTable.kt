@@ -5,6 +5,6 @@ import org.jetbrains.exposed.sql.Column
 import java.util.*
 
 object PollAnswerTable : UUIDTable() {
-    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id)
+    val pollId: Column<UUID> = uuid("poll_id").references(PollTable.id).index()
     val text: Column<String> = text("text")
 }
