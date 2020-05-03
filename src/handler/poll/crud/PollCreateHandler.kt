@@ -22,7 +22,7 @@ class PollCreateHandler {
                 owner = user
                 status = PollStatus.CREATED
                 question = createdPollDto.question
-                participantsRequired = 10
+                engagementRequired = 10
             }
             createdPollDto.answers.forEach { answer ->
                 PollAnswerDao.new {

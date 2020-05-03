@@ -13,7 +13,8 @@ class PollMapper {
             answers = pollEntity.answers.map { answerEntity ->
                 answerEntity.text
             },
-            participantRequired = pollEntity.participantsRequired,
+            engagementRequired = pollEntity.engagementRequired,
+            engagementCount = pollEntity.engagementCount.count(),
             likeCount = pollEntity.likes.count(),
             dislikeCount = pollEntity.dislikes.count()
         )

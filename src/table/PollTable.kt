@@ -13,5 +13,5 @@ object PollTable : UUIDTable() {
     val ownerId: Column<EntityID<UUID>> = reference("owner_id", UserTable)
     val status: Column<PollStatus> = enumeration("status", PollStatus::class)
     val question: Column<String> = text("question")
-    val participantsRequired: Column<Int> = integer("participants_required")
+    val engagementRequired: Column<Int> = integer("engagement_required")
 }

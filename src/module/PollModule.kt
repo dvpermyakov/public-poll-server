@@ -1,6 +1,5 @@
 package com.public.poll.module
 
-import com.public.poll.dto.CreatedPollDto
 import com.public.poll.handler.poll.action.PollEngageHandler
 import com.public.poll.handler.poll.action.PollReportHandler
 import com.public.poll.handler.poll.action.PollVoteHandler
@@ -51,11 +50,10 @@ fun Application.pollModule() {
                     }
 
                     post("/create") {
-                        val createdPollDto = call.receive<CreatedPollDto>()
                         call.commonRespond(
                             PollCreateHandler().handle(
                                 user = call.getUser(),
-                                createdPollDto = createdPollDto
+                                createdPollDto = call.receive()
                             )
                         )
                     }
@@ -69,12 +67,11 @@ fun Application.pollModule() {
                     }
 
                     post("/edit/{pollId}") {
-                        val pollDto = call.receive<CreatedPollDto>()
                         call.commonRespond(
                             PollEditHandler().handle(
                                 user = call.getUser(),
                                 pollId = call.getPollId(),
-                                pollDto = pollDto
+                                pollDto = call.receive()
                             )
                         )
                     }
