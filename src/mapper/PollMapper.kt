@@ -2,6 +2,7 @@ package com.public.poll.mapper
 
 import com.public.poll.dao.PollDao
 import com.public.poll.dto.PollDto
+import java.util.*
 
 class PollMapper {
     fun map(pollEntity: PollDao): PollDto {
@@ -16,5 +17,9 @@ class PollMapper {
             likeCount = pollEntity.likes.count(),
             dislikeCount = pollEntity.dislikes.count()
         )
+    }
+
+    fun map(pollId: String): UUID {
+        return UUID.fromString(pollId)
     }
 }

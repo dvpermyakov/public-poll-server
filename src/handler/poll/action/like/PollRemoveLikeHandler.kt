@@ -2,22 +2,35 @@ package com.public.poll.handler.poll.action.like
 
 import com.public.poll.dao.PollLikeDao
 import com.public.poll.dao.UserDao
+import com.public.poll.dto.ErrorDto
+import com.public.poll.mapper.PollMapper
+import com.public.poll.response.CommonResponse
+import com.public.poll.response.toResponse
 import com.public.poll.table.PollLikeTable
+import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 class PollRemoveLikeHandler {
 
-    fun handle(user: UserDao, pollId: UUID) {
-        return transaction {
-            PollLikeDao
-                .find {
-                    (PollLikeTable.ownerId eq user.id) and (PollLikeTable.pollId eq pollId)
-                }
-                .forEach { likeEntity ->
-                    likeEntity.delete()
-                }
+    private val pollMapper = PollMapper()
+
+    fun handle(user: UserDao, pollId: String): CommonResponse {
+        val pollUuid = try {
+            pollMapper.map(pollId)
+        } catch (ex: Exception) {
+            return ErrorDto("PollId is invalid").toResponse()
+        }
+        val pollLikeEntity = transaction {
+            PollLikeDao.find {
+                (PollLikeTable.ownerId eq user.id) and (PollLikeTable.pollId eq pollUuid)
+            }.firstOrNull()
+        }
+        return if (pollLikeEntity == null) {
+            ErrorDto("Like for this poll wasn't found").toResponse()
+        } else {
+            pollLikeEntity.delete()
+            CommonResponse(HttpStatusCode.OK)
         }
     }
 }

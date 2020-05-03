@@ -5,5 +5,5 @@ import io.ktor.http.HttpStatusCode
 
 data class CommonResponse(
     val status: HttpStatusCode,
-    val dto: Dto
+    val dto: Dto? = null
 )

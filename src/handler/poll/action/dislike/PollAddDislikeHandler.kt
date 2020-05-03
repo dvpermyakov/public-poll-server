@@ -2,33 +2,47 @@ package com.public.poll.handler.poll.action.dislike
 
 import com.public.poll.dao.PollDao
 import com.public.poll.dao.PollDislikeDao
-import com.public.poll.dao.PollEngagementDao
 import com.public.poll.dao.UserDao
-import com.public.poll.table.PollEngagementTable
+import com.public.poll.dto.ErrorDto
+import com.public.poll.mapper.PollMapper
+import com.public.poll.response.CommonResponse
+import com.public.poll.response.toResponse
+import com.public.poll.table.PollDislikeTable
+import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-import java.util.*
 
 class PollAddDislikeHandler {
 
-    fun handle(user: UserDao, pollId: UUID): Boolean {
-        return transaction {
-            val dislikeCount = PollEngagementDao.count(Op.build {
-                (PollEngagementTable.ownerId eq user.id) and (PollEngagementTable.pollId eq pollId)
+    private val pollMapper = PollMapper()
+
+    fun handle(user: UserDao, pollId: String): CommonResponse {
+        val pollUuid = try {
+            pollMapper.map(pollId)
+        } catch (ex: Exception) {
+            return ErrorDto("PollId is invalid").toResponse()
+        }
+        val dislikeCount = transaction {
+            PollDislikeDao.count(Op.build {
+                (PollDislikeTable.ownerId eq user.id) and (PollDislikeTable.pollId eq pollUuid)
             })
-            if (dislikeCount == 0L) {
-                PollDao.findById(pollId)?.let { pollEntity ->
-                    PollDislikeDao.new {
-                        created = DateTime.now()
-                        poll = pollEntity
-                        owner = user
-                    }
-                    return@transaction true
+        }
+        return if (dislikeCount == 0L) {
+            val pollEntity = PollDao.findById(pollUuid)
+            if (pollEntity != null) {
+                PollDislikeDao.new {
+                    created = DateTime.now()
+                    poll = pollEntity
+                    owner = user
                 }
+                CommonResponse(HttpStatusCode.Created)
+            } else {
+                ErrorDto("Poll wasn't found").toResponse()
             }
-            return@transaction false
+        } else {
+            ErrorDto("You have already disliked this poll").toResponse()
         }
     }
 }
