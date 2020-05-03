@@ -1,25 +1,25 @@
-package com.public.poll.poll.action.like
+package com.public.poll.handler.poll.action
 
 import com.public.poll.dao.PollDao
-import com.public.poll.dao.PollLikeDao
+import com.public.poll.dao.PollEngagementDao
 import com.public.poll.dao.UserDao
-import com.public.poll.table.PollLikeTable
+import com.public.poll.table.PollEngagementTable
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
 
-class PollAddLikeHandler {
+class PollEngageHandler {
 
     fun handle(user: UserDao, pollId: UUID): Boolean {
         return transaction {
-            val likeCount = PollLikeDao.count(Op.build {
-                (PollLikeTable.ownerId eq user.id) and (PollLikeTable.pollId eq pollId)
+            val engagementCount = PollEngagementDao.count(Op.build {
+                (PollEngagementTable.ownerId eq user.id) and (PollEngagementTable.pollId eq pollId)
             })
-            if (likeCount == 0L) {
+            if (engagementCount == 0L) {
                 PollDao.findById(pollId)?.let { pollEntity ->
-                    PollLikeDao.new {
+                    PollEngagementDao.new {
                         created = DateTime.now()
                         poll = pollEntity
                         owner = user

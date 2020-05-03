@@ -2,19 +2,19 @@ package com.public.poll
 
 import com.public.poll.dao.UserDao
 import com.public.poll.dto.CreatedPollDto
-import com.public.poll.poll.action.PollEngageHandler
-import com.public.poll.poll.action.PollReportHandler
-import com.public.poll.poll.action.PollVoteHandler
-import com.public.poll.poll.action.dislike.PollAddDislikeHandler
-import com.public.poll.poll.action.dislike.PollRemoveDislikeHandler
-import com.public.poll.poll.action.like.PollAddLikeHandler
-import com.public.poll.poll.action.like.PollRemoveLikeHandler
-import com.public.poll.poll.crud.PollCreateHandler
-import com.public.poll.poll.crud.PollEditHandler
-import com.public.poll.poll.crud.PollGetHandler
-import com.public.poll.poll.list.PollFeedHandler
-import com.public.poll.poll.list.PollHistoryHandler
-import com.public.poll.poll.list.PollsMyListHandler
+import com.public.poll.handler.poll.action.PollEngageHandler
+import com.public.poll.handler.poll.action.PollReportHandler
+import com.public.poll.handler.poll.action.PollVoteHandler
+import com.public.poll.handler.poll.action.dislike.PollAddDislikeHandler
+import com.public.poll.handler.poll.action.dislike.PollRemoveDislikeHandler
+import com.public.poll.handler.poll.action.like.PollAddLikeHandler
+import com.public.poll.handler.poll.action.like.PollRemoveLikeHandler
+import com.public.poll.handler.poll.crud.PollCreateHandler
+import com.public.poll.handler.poll.crud.PollEditHandler
+import com.public.poll.handler.poll.crud.PollGetHandler
+import com.public.poll.handler.poll.list.PollFeedHandler
+import com.public.poll.handler.poll.list.PollHistoryHandler
+import com.public.poll.handler.poll.list.PollsMyListHandler
 import com.public.poll.table.PollTable
 import com.public.poll.table.UserTable
 import io.ktor.application.ApplicationCall
@@ -86,7 +86,7 @@ fun main() {
         routing {
             route("/api") {
 
-                get("/auth/signin") {
+                post("/auth/signin") {
                     transaction {
                         UserDao.new {
                             created = DateTime.now()
@@ -97,12 +97,12 @@ fun main() {
                     }
                 }
 
-                get("/auth/signup") {
+                post("/auth/signup") {
 
                 }
 
                 authenticate {
-                    route("/poll") {
+                    route("/handler/poll") {
 
                         get("/feed") {
                             call.respond(PollFeedHandler().handle())

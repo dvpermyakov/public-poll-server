@@ -1,4 +1,4 @@
-package com.public.poll.poll.action.like
+package com.public.poll.handler.poll.action.like
 
 import com.public.poll.dao.PollLikeDao
 import com.public.poll.dao.UserDao

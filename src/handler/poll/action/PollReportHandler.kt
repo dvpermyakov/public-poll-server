@@ -1,4 +1,4 @@
-package com.public.poll.poll.action
+package com.public.poll.handler.poll.action
 
 import com.public.poll.dao.PollDao
 import com.public.poll.dao.PollReportDao

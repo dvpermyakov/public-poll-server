@@ -1,6 +1,7 @@
-package com.public.poll.poll.action
+package com.public.poll.handler.poll.action.dislike
 
 import com.public.poll.dao.PollDao
+import com.public.poll.dao.PollDislikeDao
 import com.public.poll.dao.PollEngagementDao
 import com.public.poll.dao.UserDao
 import com.public.poll.table.PollEngagementTable
@@ -10,16 +11,16 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
 
-class PollEngageHandler {
+class PollAddDislikeHandler {
 
     fun handle(user: UserDao, pollId: UUID): Boolean {
         return transaction {
-            val engagementCount = PollEngagementDao.count(Op.build {
+            val dislikeCount = PollEngagementDao.count(Op.build {
                 (PollEngagementTable.ownerId eq user.id) and (PollEngagementTable.pollId eq pollId)
             })
-            if (engagementCount == 0L) {
+            if (dislikeCount == 0L) {
                 PollDao.findById(pollId)?.let { pollEntity ->
-                    PollEngagementDao.new {
+                    PollDislikeDao.new {
                         created = DateTime.now()
                         poll = pollEntity
                         owner = user

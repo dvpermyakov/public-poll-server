@@ -1,4 +1,4 @@
-package com.public.poll.poll.action.dislike
+package com.public.poll.handler.poll.action.dislike
 
 import com.public.poll.dao.PollDislikeDao
 import com.public.poll.dao.UserDao
