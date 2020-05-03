@@ -72,6 +72,7 @@ fun Application.pollModule() {
                         val pollDto = call.receive<CreatedPollDto>()
                         call.commonRespond(
                             PollEditHandler().handle(
+                                user = call.getUser(),
                                 pollId = call.getPollId(),
                                 pollDto = pollDto
                             )

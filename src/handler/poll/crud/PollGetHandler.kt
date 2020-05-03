@@ -17,13 +17,13 @@ class PollGetHandler {
         } catch (ex: Exception) {
             return ErrorDto("PollId is invalid").toResponse()
         }
-        val pollEntity = transaction {
-            PollDao.findById(pollUuid)
-        }
-        return if (pollEntity == null) {
-            ErrorDto("Poll wasn't found").toResponse()
-        } else {
-            pollMapper.map(pollEntity).toResponse()
+        return transaction {
+            val pollEntity = PollDao.findById(pollUuid)
+            if (pollEntity == null) {
+                ErrorDto("Poll wasn't found").toResponse()
+            } else {
+                pollMapper.map(pollEntity).toResponse()
+            }
         }
     }
 }
