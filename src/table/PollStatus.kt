@@ -5,5 +5,6 @@ enum class PollStatus {
     APPROVED,
     DECLINED,
     ACTIVE,
-    COMPLETED
+    COMPLETED,
+    STALE
 }
