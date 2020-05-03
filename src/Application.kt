@@ -2,20 +2,31 @@ package com.public.poll
 
 import com.public.poll.dao.UserDao
 import com.public.poll.dto.CreatedPollDto
-import com.public.poll.models.User
-import com.public.poll.poll.CreatePollHandler
-import com.public.poll.poll.GetPollHandler
-import com.public.poll.poll.PollFeedHandler
-import com.public.poll.poll.ReportHandler
+import com.public.poll.poll.action.PollEngageHandler
+import com.public.poll.poll.action.PollReportHandler
+import com.public.poll.poll.action.PollVoteHandler
+import com.public.poll.poll.action.dislike.PollAddDislikeHandler
+import com.public.poll.poll.action.dislike.PollRemoveDislikeHandler
+import com.public.poll.poll.action.like.PollAddLikeHandler
+import com.public.poll.poll.action.like.PollRemoveLikeHandler
+import com.public.poll.poll.crud.PollCreateHandler
+import com.public.poll.poll.crud.PollEditHandler
+import com.public.poll.poll.crud.PollGetHandler
+import com.public.poll.poll.list.PollFeedHandler
+import com.public.poll.poll.list.PollHistoryHandler
+import com.public.poll.poll.list.PollsMyListHandler
 import com.public.poll.table.PollTable
 import com.public.poll.table.UserTable
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
@@ -32,15 +43,17 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.util.*
 
-data class UserPrincipal(val user: User) : Principal
+data class UserPrincipal(val user: UserDao) : Principal
 
 fun main() {
     val server = embeddedServer(Tomcat, port = 8080) {
 
         install(DefaultHeaders)
         install(CallLogging)
+        install(StatusPages)
 
         install(Authentication) {
             basic {
@@ -50,13 +63,7 @@ fun main() {
                         UserDao.find { UserTable.name eq credentials.name }.firstOrNull()
                     }?.let { user ->
                         if (user.password.contentEquals(credentials.password)) {
-                            UserPrincipal(
-                                user = User(
-                                    id = user.id.value,
-                                    name = user.name,
-                                    email = user.email
-                                )
-                            )
+                            UserPrincipal(user)
                         } else null
                     }
                 }
@@ -79,9 +86,10 @@ fun main() {
         routing {
             route("/api") {
 
-                get("/auth/create") {
+                get("/auth/signin") {
                     transaction {
                         UserDao.new {
+                            created = DateTime.now()
                             name = "Dmitrii"
                             password = Base64.getEncoder().encodeToString("password".toByteArray())
                             email = "dv@gmail.com"
@@ -89,36 +97,128 @@ fun main() {
                     }
                 }
 
+                get("/auth/signup") {
+
+                }
+
                 authenticate {
                     route("/poll") {
 
                         get("/feed") {
-                            val handler = PollFeedHandler()
-                            call.respond(handler.handle())
+                            call.respond(PollFeedHandler().handle())
                         }
 
-                        get("/get/{pollId}") {
-                            val handler = GetPollHandler()
-                            val pollId = requireNotNull(call.parameters["pollId"])
-                            call.respond(handler.handle(pollId))
+                        get("/my") {
+                            call.respond(
+                                PollsMyListHandler().handle(
+                                    user = call.getUser()
+                                )
+                            )
+                        }
+
+                        get("/history") {
+                            call.respond(
+                                PollHistoryHandler().handle(
+                                    user = call.getUser()
+                                )
+                            )
                         }
 
                         post("/create") {
                             val createdPollDto = call.receive<CreatedPollDto>()
-                            val handler = CreatePollHandler()
-                            call.respond(handler.handle(createdPollDto))
-                        }
-
-                        post("/report") {
-                            val userPrincipal = requireNotNull(call.authentication.principal<UserPrincipal>())
-                            val handler = ReportHandler()
-                            val pollId = requireNotNull(call.parameters["pollId"])
                             call.respond(
-                                handler.handle(
-                                    user = userPrincipal.user,
-                                    pollId = pollId
+                                PollCreateHandler().handle(
+                                    user = call.getUser(),
+                                    pollDto = createdPollDto
                                 )
                             )
+                        }
+
+                        get("/get/{pollId}") {
+                            PollGetHandler().handle(pollId = call.getPollId())?.let { pollDto ->
+                                call.respond(pollDto)
+                            } ?: run {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/edit/{pollId}") {
+                            val pollDto = call.receive<CreatedPollDto>()
+                            call.respond(
+                                PollEditHandler().handle(
+                                    pollId = call.getPollId(),
+                                    pollDto = pollDto
+                                )
+                            )
+                        }
+
+                        post("/engage/{pollId}") {
+                            val handled = PollEngageHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Created)
+                            } else {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/vote/{pollId}") {
+                            val handled = PollVoteHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Created)
+                            } else {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/report/{pollId}") {
+                            val handled = PollReportHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Created)
+                            } else {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/like/{pollId}/add") {
+                            val handled = PollAddLikeHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Created)
+                            } else {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/like/{pollId}/remove") {
+                            PollRemoveLikeHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            call.respond(HttpStatusCode.OK)
+                        }
+
+                        post("/dislike/{pollId}/add") {
+                            val handled = PollAddDislikeHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            if (handled) {
+                                call.respond(HttpStatusCode.Created)
+                            } else {
+                                call.respond(HttpStatusCode.NotFound)
+                            }
+                        }
+
+                        post("/dislike/{pollId}/remove") {
+                            PollRemoveDislikeHandler().handle(
+                                user = call.getUser(), pollId = call.getPollId()
+                            )
+                            call.respond(HttpStatusCode.OK)
                         }
                     }
                 }
@@ -144,4 +244,12 @@ private fun createTables() {
         SchemaUtils.create(UserTable)
         SchemaUtils.create(PollTable)
     }
+}
+
+private fun ApplicationCall.getUser(): UserDao {
+    return requireNotNull(authentication.principal<UserPrincipal>()).user
+}
+
+private fun ApplicationCall.getPollId(): UUID {
+    return UUID.fromString(requireNotNull(parameters["pollId"]))
 }

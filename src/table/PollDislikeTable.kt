@@ -10,5 +10,5 @@ import java.util.*
 object PollDislikeTable : UUIDTable() {
     val created: Column<DateTime> = datetime("created")
     val pollId: Column<EntityID<UUID>> = reference("poll_id", PollTable).index()
-    val ownerId: Column<UUID> = PollTable.uuid("owner_id").references(UserTable.id)
+    val ownerId: Column<EntityID<UUID>> = reference("owner_id", UserTable)
 }
