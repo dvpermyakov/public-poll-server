@@ -1,0 +1,66 @@
+package com.public.poll.module
+
+import com.public.poll.dao.UserDao
+import com.public.poll.dto.TokenDto
+import com.public.poll.handler.auth.SignInHandler
+import com.public.poll.handler.auth.SignUpHandler
+import com.public.poll.table.UserTable
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.Principal
+import io.ktor.auth.basic
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.receive
+import io.ktor.response.respond
+import io.ktor.routing.post
+import io.ktor.routing.route
+import io.ktor.routing.routing
+import org.jetbrains.exposed.sql.transactions.transaction
+
+data class UserPrincipal(val user: UserDao) : Principal
+
+fun Application.authModule() {
+    install(Authentication) {
+        basic {
+            realm = "own realm for basic"
+            validate { credentials ->
+                transaction {
+                    UserDao.find { UserTable.name eq credentials.name }.firstOrNull()
+                }?.let { user ->
+                    if (user.password.contentEquals(credentials.password)) {
+                        UserPrincipal(user)
+                    } else null
+                }
+            }
+        }
+    }
+
+    routing {
+        route("/api") {
+
+            route("/auth") {
+                post("/signin") {
+                    val token = call.receive<TokenDto>()
+                    val user = SignInHandler().handle(token)
+                    if (user != null) {
+                        call.respond(user)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
+                }
+
+                post("/signup") {
+                    val token = call.receive<TokenDto>()
+                    val user = SignUpHandler().handle(token)
+                    if (user != null) {
+                        call.respond(user)
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest)
+                    }
+                }
+            }
+        }
+    }
+}
