@@ -25,11 +25,12 @@ fun Application.authModule() {
             realm = "own realm for basic"
             validate { credentials ->
                 transaction {
-                    UserDao.find { UserTable.name eq credentials.name }.firstOrNull()
-                }?.let { user ->
-                    if (user.password.contentEquals(credentials.password)) {
+                    val user = UserDao.find { UserTable.name eq credentials.name }.firstOrNull()
+                    if (user != null && user.password.contentEquals(credentials.password)) {
                         UserPrincipal(user)
-                    } else null
+                    } else {
+                        null
+                    }
                 }
             }
         }
