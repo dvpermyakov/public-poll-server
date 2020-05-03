@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 
 object UserTable : UUIDTable() {
     val created: Column<DateTime> = datetime("created")
-    val name: Column<String> = varchar("name", length = 50).uniqueIndex()
+    val name: Column<String> = varchar("name", length = 50)
     val password: Column<String> = text("password")
     val email: Column<String> = varchar("email", length = 50).uniqueIndex()
 }

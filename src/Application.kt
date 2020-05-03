@@ -2,6 +2,9 @@ package com.public.poll
 
 import com.public.poll.dao.UserDao
 import com.public.poll.dto.CreatedPollDto
+import com.public.poll.dto.TokenDto
+import com.public.poll.handler.auth.SignInHandler
+import com.public.poll.handler.auth.SignUpHandler
 import com.public.poll.handler.poll.action.PollEngageHandler
 import com.public.poll.handler.poll.action.PollReportHandler
 import com.public.poll.handler.poll.action.PollVoteHandler
@@ -43,7 +46,6 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import java.util.*
 
 data class UserPrincipal(val user: UserDao) : Principal
@@ -86,19 +88,26 @@ fun main() {
         routing {
             route("/api") {
 
-                post("/auth/signin") {
-                    transaction {
-                        UserDao.new {
-                            created = DateTime.now()
-                            name = "Dmitrii"
-                            password = Base64.getEncoder().encodeToString("password".toByteArray())
-                            email = "dv@gmail.com"
+                route("/auth") {
+                    post("/signin") {
+                        val token = call.receive<TokenDto>()
+                        val user = SignInHandler().handle(token)
+                        if (user != null) {
+                            call.respond(user)
+                        } else {
+                            call.respond(HttpStatusCode.BadRequest)
                         }
                     }
-                }
 
-                post("/auth/signup") {
-
+                    post("/signup") {
+                        val token = call.receive<TokenDto>()
+                        val user = SignUpHandler().handle(token)
+                        if (user != null) {
+                            call.respond(user)
+                        } else {
+                            call.respond(HttpStatusCode.BadRequest)
+                        }
+                    }
                 }
 
                 authenticate {
