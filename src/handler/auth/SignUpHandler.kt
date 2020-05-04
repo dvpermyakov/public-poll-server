@@ -16,11 +16,11 @@ class SignUpHandler(
         val decodedToken = try {
             String(Base64.getDecoder().decode(tokenDto.token))
         } catch (ignore: Exception) {
-            return ErrorDto("Token can't be parsed").toResponse(HttpStatusCode.BadRequest)
+            return ErrorDto("Token can't be parsed").toResponse()
         }
         val tokenSlices = decodedToken.split(":")
         if (tokenSlices.size < 3) {
-            return ErrorDto("Token has wrong format").toResponse(HttpStatusCode.BadRequest)
+            return ErrorDto("Token has wrong format").toResponse()
         }
         val nameFromToken = tokenSlices[0]
         val passFromToken = tokenSlices[1]

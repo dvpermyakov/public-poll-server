@@ -5,7 +5,6 @@ import com.public.poll.dto.TokenDto
 import com.public.poll.repositories.UserRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
-import io.ktor.http.HttpStatusCode
 import java.util.*
 
 class SignInHandler(
@@ -16,11 +15,11 @@ class SignInHandler(
         val decodedToken = try {
             String(Base64.getDecoder().decode(tokenDto.token))
         } catch (ignore: Exception) {
-            return ErrorDto("Token can't be parsed").toResponse(HttpStatusCode.BadRequest)
+            return ErrorDto("Token can't be parsed").toResponse()
         }
         val tokenSlices = decodedToken.split(":")
         if (tokenSlices.size < 2) {
-            return ErrorDto("Token has wrong format").toResponse(HttpStatusCode.BadRequest)
+            return ErrorDto("Token has wrong format").toResponse()
         }
         val nameFromToken = tokenSlices[0]
         val passFromToken = tokenSlices[1]
