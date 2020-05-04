@@ -24,7 +24,7 @@ class PollRepositoryImpl(
                 created = DateTime.now()
                 updated = DateTime.now()
                 owner = UserDao.findById(getUserEntityId(userDto))!!
-                status = PollStatus.APPROVED
+                status = PollStatus.CREATED
                 question = createdPollDto.question
                 engagementRequired = 10
             }
