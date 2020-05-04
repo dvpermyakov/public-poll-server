@@ -13,9 +13,7 @@ class PollMapperImpl : PollMapper {
             question = pollEntity.question,
             answers = pollEntity.answers.map { answerEntity -> map(answerEntity) },
             engagementRequired = pollEntity.engagementRequired,
-            engagementCount = pollEntity.engagementCount.count(),
-            likeCount = pollEntity.likes.count(),
-            dislikeCount = pollEntity.dislikes.count()
+            engagementCount = pollEntity.engagementCount.count()
         )
     }
 
