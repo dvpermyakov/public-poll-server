@@ -1,6 +1,8 @@
 package com.public.poll.dao
 
-import com.public.poll.table.*
+import com.public.poll.table.PollAnswerTable
+import com.public.poll.table.PollEngagementTable
+import com.public.poll.table.PollTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -18,6 +20,4 @@ class PollDao(id: EntityID<UUID>) : UUIDEntity(id) {
 
     val answers by PollAnswerDao referrersOn PollAnswerTable.pollId
     val engagementCount by PollEngagementDao referrersOn PollEngagementTable.pollId
-    val likes by PollLikeDao referrersOn PollLikeTable.pollId
-    val dislikes by PollDislikeDao referrersOn PollDislikeTable.pollId
 }

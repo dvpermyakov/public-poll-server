@@ -19,9 +19,7 @@ fun Application.databaseModule() {
         addLogger(StdOutSqlLogger)
 
         SchemaUtils.create(PollAnswerTable)
-        SchemaUtils.create(PollDislikeTable)
         SchemaUtils.create(PollEngagementTable)
-        SchemaUtils.create(PollLikeTable)
         SchemaUtils.create(PollModerationResultTable)
         SchemaUtils.create(PollReportTable)
         SchemaUtils.create(PollTable)
