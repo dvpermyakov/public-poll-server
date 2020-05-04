@@ -25,6 +25,9 @@ class PollEngageHandler(
             PollRepository.CreateEngagementResult.PollNotFound -> {
                 ErrorDto("Poll wasn't found").toResponse()
             }
+            PollRepository.CreateEngagementResult.OwnerCannotBeEngaged -> {
+                ErrorDto("Owner can't be engaged to his own poll").toResponse()
+            }
             PollRepository.CreateEngagementResult.UserAlreadyEngaged -> {
                 ErrorDto("You have already engaged to this poll").toResponse()
             }

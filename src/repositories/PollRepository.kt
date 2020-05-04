@@ -32,6 +32,7 @@ interface PollRepository {
         object Success : CreateEngagementResult()
         object WrongIdFormat : CreateEngagementResult()
         object PollNotFound : CreateEngagementResult()
+        object OwnerCannotBeEngaged: CreateEngagementResult()
         object UserAlreadyEngaged : CreateEngagementResult()
         data class WrongStatus(val status: PollStatus) : CreateEngagementResult()
     }

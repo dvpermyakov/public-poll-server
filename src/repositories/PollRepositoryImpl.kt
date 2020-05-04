@@ -99,23 +99,25 @@ class PollRepositoryImpl(
             transaction {
                 val pollEntity = PollDao.findById(pollUuid)
                 if (pollEntity != null) {
-                    if (pollEntity.status != PollStatus.APPROVED) {
-                        PollRepository.CreateEngagementResult.WrongStatus(pollEntity.status)
-                    } else {
-                        PollEngagementDao.new {
-                            created = DateTime.now()
-                            poll = pollEntity
-                            owner = UserDao.findById(getUserEntityId(userDto))!!
+                    when {
+                        pollEntity.status != PollStatus.APPROVED -> {
+                            PollRepository.CreateEngagementResult.WrongStatus(pollEntity.status)
                         }
-                        PollRepository.CreateEngagementResult.Success
+                        pollEntity.owner.id == userId -> {
+                            PollRepository.CreateEngagementResult.OwnerCannotBeEngaged
+                        }
+                        else -> {
+                            PollEngagementDao.new {
+                                created = DateTime.now()
+                                poll = pollEntity
+                                owner = UserDao.findById(getUserEntityId(userDto))!!
+                            }
+                            PollRepository.CreateEngagementResult.Success
+                        }
                     }
-                } else {
-                    PollRepository.CreateEngagementResult.PollNotFound
-                }
+                } else PollRepository.CreateEngagementResult.PollNotFound
             }
-        } else {
-            PollRepository.CreateEngagementResult.UserAlreadyEngaged
-        }
+        } else PollRepository.CreateEngagementResult.UserAlreadyEngaged
     }
 
     override fun createVote(userDto: UserDto, pollId: String, answerId: String): PollRepository.CreateVoteResult {
