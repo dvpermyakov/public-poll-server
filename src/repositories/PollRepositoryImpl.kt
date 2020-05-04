@@ -1,16 +1,15 @@
 package com.public.poll.repositories
 
-import com.public.poll.dao.PollAnswerDao
-import com.public.poll.dao.PollDao
-import com.public.poll.dao.UserDao
+import com.public.poll.dao.*
 import com.public.poll.dto.CreatedPollDto
 import com.public.poll.dto.PollDto
 import com.public.poll.dto.UserDto
 import com.public.poll.mapper.PollMapper
-import com.public.poll.table.PollStatus
-import com.public.poll.table.UserTable
+import com.public.poll.table.*
 import com.public.poll.utils.toUUID
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.util.*
@@ -20,13 +19,11 @@ class PollRepositoryImpl(
 ) : PollRepository {
 
     override fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto {
-        val userId = EntityID(userDto.id.toUUID(), UserTable)
-
         return transaction {
             val pollEntity = PollDao.new {
                 created = DateTime.now()
                 updated = DateTime.now()
-                owner = UserDao.findById(userId)!!
+                owner = UserDao.findById(getUserEntityId(userDto))!!
                 status = PollStatus.APPROVED
                 question = createdPollDto.question
                 engagementRequired = 10
@@ -42,7 +39,7 @@ class PollRepositoryImpl(
     }
 
     override fun getPoll(pollId: String): PollRepository.GetPollResult {
-        val pollUuid = getPollUuid(pollId) ?: return PollRepository.GetPollResult.WrongIdFormat
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.GetPollResult.WrongIdFormat
         return transaction {
             PollDao.findById(pollUuid)?.let { pollEntity ->
                 PollRepository.GetPollResult.Success(pollMapper.map(pollEntity))
@@ -55,8 +52,7 @@ class PollRepositoryImpl(
         pollId: String,
         createdPollDto: CreatedPollDto
     ): PollRepository.EditPollResult {
-        val pollUuid = getPollUuid(pollId) ?: return PollRepository.EditPollResult.WrongIdFormat
-        val userId = EntityID(userDto.id.toUUID(), UserTable)
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.EditPollResult.WrongIdFormat
 
         return transaction {
             val pollEntity = PollDao.findById(pollUuid)
@@ -64,7 +60,7 @@ class PollRepositoryImpl(
                 pollEntity == null -> {
                     PollRepository.EditPollResult.WrongIdFormat
                 }
-                pollEntity.owner.id != userId -> {
+                pollEntity.owner.id != getUserEntityId(userDto) -> {
                     PollRepository.EditPollResult.NoAccess
                 }
                 pollEntity.status == PollStatus.CREATED -> {
@@ -85,18 +81,109 @@ class PollRepositoryImpl(
                         )
                     }
                 }
-                else -> {
-                    PollRepository.EditPollResult.WrongStatus(pollEntity.status)
-                }
+                else -> PollRepository.EditPollResult.WrongStatus(pollEntity.status)
             }
         }
     }
 
-    private fun getPollUuid(pollId: String): UUID? {
+    override fun createEngagement(userDto: UserDto, pollId: String): PollRepository.CreateEngagementResult {
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.CreateEngagementResult.WrongIdFormat
+        val userId = getUserEntityId(userDto)
+
+        val engagementCount = transaction {
+            PollEngagementDao.count(Op.build {
+                (PollEngagementTable.ownerId eq userId) and (PollEngagementTable.pollId eq pollUuid)
+            })
+        }
+        return if (engagementCount == 0L) {
+            transaction {
+                val pollEntity = PollDao.findById(pollUuid)
+                if (pollEntity != null) {
+                    if (pollEntity.status != PollStatus.APPROVED) {
+                        PollRepository.CreateEngagementResult.WrongStatus(pollEntity.status)
+                    } else {
+                        PollEngagementDao.new {
+                            created = DateTime.now()
+                            poll = pollEntity
+                            owner = UserDao.findById(getUserEntityId(userDto))!!
+                        }
+                        PollRepository.CreateEngagementResult.Success
+                    }
+                } else {
+                    PollRepository.CreateEngagementResult.PollNotFound
+                }
+            }
+        } else {
+            PollRepository.CreateEngagementResult.UserAlreadyEngaged
+        }
+    }
+
+    override fun createVote(userDto: UserDto, pollId: String, answerId: String): PollRepository.CreateVoteResult {
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.CreateVoteResult.WrongPollIdFormat
+        val answerUuid = getSafeUuid(answerId) ?: return PollRepository.CreateVoteResult.WrongAnswerIdFormat
+        val userId = getUserEntityId(userDto)
+
+        val voteCount = transaction {
+            PollVoteDao.count(Op.build {
+                (PollVoteTable.ownerId eq userId) and (PollVoteTable.pollId eq pollUuid)
+            })
+        }
+        return if (voteCount == 0L) {
+            transaction {
+                val pollEntity = PollDao.findById(pollUuid)
+                if (pollEntity != null) {
+                    if (pollEntity.status != PollStatus.ACTIVE) {
+                        PollRepository.CreateVoteResult.WrongStatus(pollEntity.status)
+                    } else {
+                        val answerEntity = PollAnswerDao.findById(answerUuid)
+                        if (answerEntity != null) {
+                            PollVoteDao.new {
+                                created = DateTime.now()
+                                poll = pollEntity
+                                owner = UserDao.findById(getUserEntityId(userDto))!!
+                                answer = answerEntity
+                            }
+                            PollRepository.CreateVoteResult.Success
+                        } else PollRepository.CreateVoteResult.AnswerNotFound
+                    }
+                } else PollRepository.CreateVoteResult.PollNotFound
+            }
+        } else PollRepository.CreateVoteResult.UserAlreadyVoted
+    }
+
+    override fun createReport(userDto: UserDto, pollId: String): PollRepository.CreateReportResult {
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.CreateReportResult.WrongIdFormat
+        val userId = getUserEntityId(userDto)
+
+        val reportCount = transaction {
+            PollReportDao.count(Op.build {
+                (PollReportTable.ownerId eq userId) and (PollReportTable.pollId eq pollUuid)
+            })
+        }
+        return if (reportCount == 0L) {
+            transaction {
+                val pollEntity = PollDao.findById(pollUuid)
+                if (pollEntity != null) {
+                    PollReportDao.new {
+                        created = DateTime.now()
+                        poll = pollEntity
+                        owner = UserDao.findById(userId)!!
+                    }
+                    PollRepository.CreateReportResult.Success
+                } else PollRepository.CreateReportResult.PollNotFound
+            }
+        } else PollRepository.CreateReportResult.UserAlreadyReported
+    }
+
+    private fun getSafeUuid(id: String): UUID? {
         return try {
-            pollId.toUUID()
+            id.toUUID()
         } catch (ex: Exception) {
             return null
         }
+    }
+
+    private fun getUserEntityId(userDto: UserDto): EntityID<UUID> {
+        return EntityID(userDto.id.toUUID(), UserTable)
     }
 }

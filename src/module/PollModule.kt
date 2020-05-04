@@ -75,18 +75,20 @@ fun Application.pollModule(kodein: Kodein) {
                     }
 
                     post("/engage/{pollId}") {
+                        val handler by kodein.instance<PollEngageHandler>()
                         call.commonRespond(
-                            PollEngageHandler().handle(
-                                user = call.getUser(),
+                            handler.handle(
+                                userDto = call.getUser(),
                                 pollId = call.getPollId()
                             )
                         )
                     }
 
                     post("/vote/{pollId}/{answerId}") {
+                        val handler by kodein.instance<PollVoteHandler>()
                         call.commonRespond(
-                            PollVoteHandler().handle(
-                                user = call.getUser(),
+                            handler.handle(
+                                userDto = call.getUser(),
                                 pollId = call.getPollId(),
                                 answerId = call.getAnswerId()
                             )
@@ -94,9 +96,10 @@ fun Application.pollModule(kodein: Kodein) {
                     }
 
                     post("/report/{pollId}") {
+                        val handler by kodein.instance<PollReportHandler>()
                         call.commonRespond(
-                            PollReportHandler().handle(
-                                user = call.getUser(),
+                            handler.handle(
+                                userDto = call.getUser(),
                                 pollId = call.getPollId()
                             )
                         )
