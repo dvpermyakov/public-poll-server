@@ -47,7 +47,7 @@ class SignInHandlerTest {
                     password = "cGFzc3dvcmQ="
                 )
             )
-        } returns null
+        } returns userDto
 
         val tokenDto = TokenDto("ZW1haWxAZW1haWwuY29tOmNHRnpjM2R2Y21RPQ==")
         val response = signInHandler.handle(tokenDto)
