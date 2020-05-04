@@ -28,7 +28,7 @@ fun main() {
         }
 
         val kodein = kodeinModule()
-        databaseModule()
+        databaseModule
         authModule(kodein)
         maintenanceModule(kodein)
         pollModule(kodein)
