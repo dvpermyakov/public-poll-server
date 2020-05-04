@@ -3,10 +3,6 @@ package com.public.poll.module
 import com.public.poll.handler.poll.action.PollEngageHandler
 import com.public.poll.handler.poll.action.PollReportHandler
 import com.public.poll.handler.poll.action.PollVoteHandler
-import com.public.poll.handler.poll.action.dislike.PollAddDislikeHandler
-import com.public.poll.handler.poll.action.dislike.PollRemoveDislikeHandler
-import com.public.poll.handler.poll.action.like.PollAddLikeHandler
-import com.public.poll.handler.poll.action.like.PollRemoveLikeHandler
 import com.public.poll.handler.poll.crud.PollCreateHandler
 import com.public.poll.handler.poll.crud.PollEditHandler
 import com.public.poll.handler.poll.crud.PollGetHandler
@@ -98,42 +94,6 @@ fun Application.pollModule() {
                     post("/report/{pollId}") {
                         call.commonRespond(
                             PollReportHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/like/{pollId}/add") {
-                        call.commonRespond(
-                            PollAddLikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/like/{pollId}/remove") {
-                        call.commonRespond(
-                            PollRemoveLikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/dislike/{pollId}/add") {
-                        call.commonRespond(
-                            PollAddDislikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/dislike/{pollId}/remove") {
-                        call.commonRespond(
-                            PollRemoveDislikeHandler().handle(
                                 user = call.getUser(),
                                 pollId = call.getPollId()
                             )
