@@ -6,7 +6,6 @@ import com.public.poll.repositories.UserRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
 import io.ktor.http.HttpStatusCode
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class SignUpHandler(
@@ -27,16 +26,14 @@ class SignUpHandler(
         val passFromToken = tokenSlices[1]
         val emailFromToken = tokenSlices[2]
 
-        return transaction {
-            if (userRepository.findUserByEmail(emailFromToken) == null) {
-                userRepository.createUser(
-                    name = nameFromToken,
-                    pass = passFromToken,
-                    email = emailFromToken
-                ).toResponse(HttpStatusCode.Created)
-            } else {
-                ErrorDto("User with $emailFromToken already exists").toResponse()
-            }
+        return if (userRepository.findUserByEmail(emailFromToken) == null) {
+            userRepository.createUser(
+                name = nameFromToken,
+                pass = passFromToken,
+                email = emailFromToken
+            ).toResponse(HttpStatusCode.Created)
+        } else {
+            ErrorDto("User with $emailFromToken already exists").toResponse()
         }
     }
 }
