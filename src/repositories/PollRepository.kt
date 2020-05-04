@@ -9,6 +9,7 @@ interface PollRepository {
     fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto
     fun getPoll(pollId: String): GetPollResult
     fun editPoll(userDto: UserDto, pollId: String, createdPollDto: CreatedPollDto): EditPollResult
+    fun approvePoll(userDto: UserDto, pollId: String): ApprovePollResult
 
     fun createEngagement(userDto: UserDto, pollId: String): CreateEngagementResult
     fun createVote(userDto: UserDto, pollId: String, answerId: String): CreateVoteResult
@@ -32,7 +33,7 @@ interface PollRepository {
         object Success : CreateEngagementResult()
         object WrongIdFormat : CreateEngagementResult()
         object PollNotFound : CreateEngagementResult()
-        object OwnerCannotBeEngaged: CreateEngagementResult()
+        object OwnerCannotBeEngaged : CreateEngagementResult()
         object UserAlreadyEngaged : CreateEngagementResult()
         data class WrongStatus(val status: PollStatus) : CreateEngagementResult()
     }
@@ -52,5 +53,13 @@ interface PollRepository {
         object WrongIdFormat : CreateReportResult()
         object PollNotFound : CreateReportResult()
         object UserAlreadyReported : CreateReportResult()
+    }
+
+    sealed class ApprovePollResult {
+        object Success : ApprovePollResult()
+        object WrongIdFormat : ApprovePollResult()
+        object PollNotFound : ApprovePollResult()
+        object NoAccess : ApprovePollResult()
+        data class WrongStatus(val status: PollStatus) : ApprovePollResult()
     }
 }

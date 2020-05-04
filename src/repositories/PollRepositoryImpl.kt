@@ -177,6 +177,32 @@ class PollRepositoryImpl(
         } else PollRepository.CreateReportResult.UserAlreadyReported
     }
 
+    override fun approvePoll(userDto: UserDto, pollId: String): PollRepository.ApprovePollResult {
+        val pollUuid = getSafeUuid(pollId) ?: return PollRepository.ApprovePollResult.WrongIdFormat
+        val userId = getUserEntityId(userDto)
+        val hasPermission = transaction {
+            PermissionDao.count(Op.build {
+                (PermissionTable.ownerId eq userId) and (PermissionTable.permission eq Permission.POLL_APPROVE)
+            }) > 0
+        }
+        if (!hasPermission) {
+            return PollRepository.ApprovePollResult.NoAccess
+        }
+        return transaction {
+            val pollEntity = PollDao.findById(pollUuid)
+            if (pollEntity != null) {
+                if (pollEntity.status != PollStatus.CREATED) {
+                    PollRepository.ApprovePollResult.WrongStatus(pollEntity.status)
+                } else {
+                    pollEntity.status = PollStatus.APPROVED
+                    PollRepository.ApprovePollResult.Success
+                }
+            } else {
+                PollRepository.ApprovePollResult.PollNotFound
+            }
+        }
+    }
+
     private fun getSafeUuid(id: String): UUID? {
         return try {
             id.toUUID()

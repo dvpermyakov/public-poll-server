@@ -5,7 +5,7 @@ import com.public.poll.repositories.PollCollectionRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
 
-class PollsMyListHandler(
+class PollMyListHandler(
     private val pollCollectionRepository: PollCollectionRepository
 ) {
 

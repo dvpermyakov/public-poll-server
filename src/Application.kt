@@ -1,24 +1,6 @@
 package com.public.poll
 
-import com.public.poll.handler.auth.SignInHandler
-import com.public.poll.handler.auth.SignUpHandler
-import com.public.poll.handler.poll.action.PollEngageHandler
-import com.public.poll.handler.poll.action.PollReportHandler
-import com.public.poll.handler.poll.action.PollVoteHandler
-import com.public.poll.handler.poll.crud.PollCreateHandler
-import com.public.poll.handler.poll.crud.PollEditHandler
-import com.public.poll.handler.poll.crud.PollGetHandler
-import com.public.poll.handler.poll.list.PollFeedHandler
-import com.public.poll.handler.poll.list.PollHistoryHandler
-import com.public.poll.handler.poll.list.PollsMyListHandler
-import com.public.poll.mapper.PollMapper
-import com.public.poll.mapper.PollMapperImpl
-import com.public.poll.mapper.UserMapper
-import com.public.poll.mapper.UserMapperImpl
-import com.public.poll.module.authModule
-import com.public.poll.module.databaseModule
-import com.public.poll.module.pollModule
-import com.public.poll.repositories.*
+import com.public.poll.module.*
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -30,11 +12,6 @@ import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.tomcat.Tomcat
 import kotlinx.serialization.json.Json
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
-import org.kodein.di.generic.singleton
 
 fun main() {
     val server = embeddedServer(Tomcat, port = 8080) {
@@ -50,29 +27,10 @@ fun main() {
             )
         }
 
-        val kodein = Kodein {
-            bind<UserMapper>() with singleton { UserMapperImpl() }
-            bind<PollMapper>() with singleton { PollMapperImpl() }
-
-            bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
-            bind<PollRepository>() with singleton { PollRepositoryImpl(instance()) }
-            bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
-
-            bind<SignInHandler>() with provider { SignInHandler(instance()) }
-            bind<SignUpHandler>() with provider { SignUpHandler(instance()) }
-            bind<PollEngageHandler>() with provider { PollEngageHandler(instance()) }
-            bind<PollReportHandler>() with provider { PollReportHandler(instance()) }
-            bind<PollVoteHandler>() with provider { PollVoteHandler(instance()) }
-            bind<PollCreateHandler>() with provider { PollCreateHandler(instance()) }
-            bind<PollEditHandler>() with provider { PollEditHandler(instance()) }
-            bind<PollGetHandler>() with provider { PollGetHandler(instance()) }
-            bind<PollFeedHandler>() with provider { PollFeedHandler(instance()) }
-            bind<PollHistoryHandler>() with provider { PollHistoryHandler(instance()) }
-            bind<PollsMyListHandler>() with provider { PollsMyListHandler(instance()) }
-        }
-
+        val kodein = kodeinModule()
         databaseModule()
         authModule(kodein)
+        maintenanceModule(kodein)
         pollModule(kodein)
     }
 

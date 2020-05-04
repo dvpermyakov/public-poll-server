@@ -8,7 +8,7 @@ import com.public.poll.handler.poll.crud.PollEditHandler
 import com.public.poll.handler.poll.crud.PollGetHandler
 import com.public.poll.handler.poll.list.PollFeedHandler
 import com.public.poll.handler.poll.list.PollHistoryHandler
-import com.public.poll.handler.poll.list.PollsMyListHandler
+import com.public.poll.handler.poll.list.PollMyListHandler
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -23,17 +23,24 @@ import org.kodein.di.generic.instance
 fun Application.pollModule(kodein: Kodein) {
     routing {
         route("/api") {
+            route("/poll") {
 
-            authenticate {
-                route("/poll") {
+                get("/feed") {
+                    val handler by kodein.instance<PollFeedHandler>()
+                    call.commonRespond(handler.handle())
+                }
 
-                    get("/feed") {
-                        val handler by kodein.instance<PollFeedHandler>()
-                        call.commonRespond(handler.handle())
-                    }
+                get("/get/{pollId}") {
+                    val handler by kodein.instance<PollGetHandler>()
+                    call.commonRespond(
+                        handler.handle(pollId = call.getPollId())
+                    )
+                }
+
+                authenticate {
 
                     get("/my") {
-                        val handler by kodein.instance<PollsMyListHandler>()
+                        val handler by kodein.instance<PollMyListHandler>()
                         call.commonRespond(
                             handler.handle(userDto = call.getUser())
                         )
@@ -53,13 +60,6 @@ fun Application.pollModule(kodein: Kodein) {
                                 userDto = call.getUser(),
                                 createdPollDto = call.receive()
                             )
-                        )
-                    }
-
-                    get("/get/{pollId}") {
-                        val handler by kodein.instance<PollGetHandler>()
-                        call.commonRespond(
-                            handler.handle(pollId = call.getPollId())
                         )
                     }
 
