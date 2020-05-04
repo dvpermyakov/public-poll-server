@@ -55,4 +55,5 @@ dependencies {
     implementation 'org.kodein.di:kodein-di-generic-jvm:6.5.5'
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "io.mockk:mockk:1.10.0"
 }
