@@ -12,14 +12,16 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override fun createUser(name: String, pass: String, email: String): UserDto {
-        return userMapper.map(
-            UserDao.new {
-                this.created = DateTime.now()
-                this.name = name
-                this.password = pass
-                this.email = email
-            }
-        )
+        return transaction {
+            userMapper.map(
+                UserDao.new {
+                    this.created = DateTime.now()
+                    this.name = name
+                    this.password = pass
+                    this.email = email
+                }
+            )
+        }
     }
 
     override fun findUserByEmail(email: String): UserDto? {
