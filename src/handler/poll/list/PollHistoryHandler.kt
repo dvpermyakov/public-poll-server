@@ -1,25 +1,16 @@
 package com.public.poll.handler.poll.list
 
-import com.public.poll.dao.PollDao
-import com.public.poll.dao.UserDao
-import com.public.poll.dto.PollCollectionDto
-import com.public.poll.mapper.PollMapper
+import com.public.poll.dto.UserDto
+import com.public.poll.repositories.PollCollectionRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
-import com.public.poll.table.PollTable
-import org.jetbrains.exposed.sql.transactions.transaction
 
-class PollHistoryHandler {
+class PollHistoryHandler(
+    private val pollCollectionRepository: PollCollectionRepository
+) {
 
-    fun handle(user: UserDao): CommonResponse {
-        return transaction {
-            PollCollectionDto(items = PollDao
-                .find { PollTable.ownerId eq user.id }
-                .map { pollEntity ->
-                    PollMapper().map(pollEntity)
-                }
-            ).toResponse()
-        }
+    fun handle(userDto: UserDto): CommonResponse {
+        return pollCollectionRepository.getPollsByUser(userDto).toResponse()
     }
 
 }

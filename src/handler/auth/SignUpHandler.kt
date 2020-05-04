@@ -1,18 +1,17 @@
 package com.public.poll.handler.auth
 
-import com.public.poll.dao.UserDao
 import com.public.poll.dto.ErrorDto
 import com.public.poll.dto.TokenDto
-import com.public.poll.mapper.UserMapper
+import com.public.poll.repositories.UserRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
-import com.public.poll.table.UserTable
 import io.ktor.http.HttpStatusCode
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import java.util.*
 
-class SignUpHandler {
+class SignUpHandler(
+    private val userRepository: UserRepository
+) {
 
     fun handle(tokenDto: TokenDto): CommonResponse {
         val decodedToken = try {
@@ -29,15 +28,12 @@ class SignUpHandler {
         val emailFromToken = tokenSlices[2]
 
         return transaction {
-            if (UserDao.find { UserTable.email eq emailFromToken }.empty()) {
-                val userEntity = UserDao.new {
-                    created = DateTime.now()
-                    name = nameFromToken
-                    password = passFromToken
+            if (userRepository.findUserByEmail(emailFromToken) == null) {
+                userRepository.createUser(
+                    name = nameFromToken,
+                    pass = passFromToken,
                     email = emailFromToken
-                }
-                val userDto = UserMapper().map(userEntity)
-                userDto.toResponse(HttpStatusCode.Created)
+                ).toResponse(HttpStatusCode.Created)
             } else {
                 ErrorDto("User with $emailFromToken already exists").toResponse()
             }

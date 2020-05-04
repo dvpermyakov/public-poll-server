@@ -3,10 +3,6 @@ package com.public.poll.module
 import com.public.poll.handler.poll.action.PollEngageHandler
 import com.public.poll.handler.poll.action.PollReportHandler
 import com.public.poll.handler.poll.action.PollVoteHandler
-import com.public.poll.handler.poll.action.dislike.PollAddDislikeHandler
-import com.public.poll.handler.poll.action.dislike.PollRemoveDislikeHandler
-import com.public.poll.handler.poll.action.like.PollAddLikeHandler
-import com.public.poll.handler.poll.action.like.PollRemoveLikeHandler
 import com.public.poll.handler.poll.crud.PollCreateHandler
 import com.public.poll.handler.poll.crud.PollEditHandler
 import com.public.poll.handler.poll.crud.PollGetHandler
@@ -21,8 +17,10 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
-fun Application.pollModule() {
+fun Application.pollModule(kodein: Kodein) {
     routing {
         route("/api") {
 
@@ -30,48 +28,48 @@ fun Application.pollModule() {
                 route("/poll") {
 
                     get("/feed") {
-                        call.commonRespond(PollFeedHandler().handle())
+                        val handler by kodein.instance<PollFeedHandler>()
+                        call.commonRespond(handler.handle())
                     }
 
                     get("/my") {
+                        val handler by kodein.instance<PollsMyListHandler>()
                         call.commonRespond(
-                            PollsMyListHandler().handle(
-                                user = call.getUser()
-                            )
+                            handler.handle(userDto = call.getUser())
                         )
                     }
 
                     get("/history") {
+                        val handler by kodein.instance<PollHistoryHandler>()
                         call.commonRespond(
-                            PollHistoryHandler().handle(
-                                user = call.getUser()
-                            )
+                            handler.handle(userDto = call.getUser())
                         )
                     }
 
                     post("/create") {
+                        val handler by kodein.instance<PollCreateHandler>()
                         call.commonRespond(
-                            PollCreateHandler().handle(
-                                user = call.getUser(),
+                            handler.handle(
+                                userDto = call.getUser(),
                                 createdPollDto = call.receive()
                             )
                         )
                     }
 
                     get("/get/{pollId}") {
+                        val handler by kodein.instance<PollGetHandler>()
                         call.commonRespond(
-                            PollGetHandler().handle(
-                                pollId = call.getPollId()
-                            )
+                            handler.handle(pollId = call.getPollId())
                         )
                     }
 
                     post("/edit/{pollId}") {
+                        val handler by kodein.instance<PollEditHandler>()
                         call.commonRespond(
-                            PollEditHandler().handle(
-                                user = call.getUser(),
+                            handler.handle(
+                                userDto = call.getUser(),
                                 pollId = call.getPollId(),
-                                pollDto = call.receive()
+                                createdPollDto = call.receive()
                             )
                         )
                     }
@@ -98,42 +96,6 @@ fun Application.pollModule() {
                     post("/report/{pollId}") {
                         call.commonRespond(
                             PollReportHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/like/{pollId}/add") {
-                        call.commonRespond(
-                            PollAddLikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/like/{pollId}/remove") {
-                        call.commonRespond(
-                            PollRemoveLikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/dislike/{pollId}/add") {
-                        call.commonRespond(
-                            PollAddDislikeHandler().handle(
-                                user = call.getUser(),
-                                pollId = call.getPollId()
-                            )
-                        )
-                    }
-
-                    post("/dislike/{pollId}/remove") {
-                        call.commonRespond(
-                            PollRemoveDislikeHandler().handle(
                                 user = call.getUser(),
                                 pollId = call.getPollId()
                             )

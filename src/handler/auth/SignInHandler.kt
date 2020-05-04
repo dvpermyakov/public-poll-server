@@ -1,18 +1,16 @@
 package com.public.poll.handler.auth
 
-import com.public.poll.dao.UserDao
 import com.public.poll.dto.ErrorDto
 import com.public.poll.dto.TokenDto
-import com.public.poll.mapper.UserMapper
+import com.public.poll.repositories.UserRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
-import com.public.poll.table.UserTable
 import io.ktor.http.HttpStatusCode
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class SignInHandler {
+class SignInHandler(
+    private val userRepository: UserRepository
+) {
 
     fun handle(tokenDto: TokenDto): CommonResponse {
         val decodedToken = try {
@@ -27,14 +25,12 @@ class SignInHandler {
         val nameFromToken = tokenSlices[0]
         val passFromToken = tokenSlices[1]
 
-        return transaction {
-            UserDao.find {
-                (UserTable.name eq nameFromToken) and (UserTable.password eq passFromToken)
-            }.firstOrNull()?.let { userEntity ->
-                UserMapper().map(userEntity).toResponse()
-            } ?: run {
-                ErrorDto("Can't find user").toResponse()
-            }
-        }
+        val userDto = userRepository.findUserByCredential(
+            UserRepository.Credentials(
+                name = nameFromToken,
+                password = passFromToken
+            )
+        )
+        return userDto?.toResponse() ?: ErrorDto("Can't find user").toResponse()
     }
 }

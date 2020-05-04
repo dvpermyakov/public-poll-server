@@ -1,58 +1,39 @@
 package com.public.poll.handler.poll.crud
 
-import com.public.poll.dao.PollAnswerDao
-import com.public.poll.dao.PollDao
-import com.public.poll.dao.UserDao
 import com.public.poll.dto.CreatedPollDto
+import com.public.poll.dto.Dto
 import com.public.poll.dto.ErrorDto
-import com.public.poll.mapper.PollMapper
+import com.public.poll.dto.UserDto
+import com.public.poll.repositories.PollRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
-import com.public.poll.table.PollStatus
-import com.public.poll.utils.toUUID
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 
-class PollEditHandler {
+class PollEditHandler(
+    private val pollRepository: PollRepository
+) {
 
-    fun handle(user: UserDao, pollId: String, pollDto: CreatedPollDto): CommonResponse {
-        val pollUuid = try {
-            pollId.toUUID()
-        } catch (ex: Exception) {
-            return ErrorDto("PollId is invalid").toResponse()
-        }
-
-        return transaction {
-            val pollEntity = PollDao.findById(pollUuid)
-            when {
-                pollEntity == null -> {
-                    ErrorDto("PollId is invalid").toResponse()
-                }
-                pollEntity.owner.id != user.id -> {
-                    ErrorDto("Only owner can change poll").toResponse()
-                }
-                pollEntity.status == PollStatus.CREATED -> {
-                    transaction {
-                        pollEntity.updated = DateTime.now()
-                        pollEntity.question = pollDto.question
-                        pollEntity.answers.forEach { answerEntity ->
-                            answerEntity.delete()
-                        }
-                        pollDto.answers.forEach { answer ->
-                            PollAnswerDao.new {
-                                poll = pollEntity
-                                text = answer
-                            }
-                        }
-                        PollMapper().map(pollEntity).toResponse()
-                    }
-                }
-                else -> {
-                    ErrorDto(
-                        "Poll should have CREATED status, but it is ${pollEntity.status}"
-                    ).toResponse()
-                }
+    fun handle(userDto: UserDto, pollId: String, createdPollDto: CreatedPollDto): CommonResponse {
+        val resultDto: Dto = when (val result = pollRepository.editPoll(
+            userDto = userDto,
+            pollId = pollId,
+            createdPollDto = createdPollDto
+        )) {
+            is PollRepository.EditPollResult.Success -> {
+                result.pollDto
+            }
+            PollRepository.EditPollResult.WrongIdFormat -> {
+                ErrorDto("PollId is invalid")
+            }
+            PollRepository.EditPollResult.NotFound -> {
+                ErrorDto("Poll wasn't found")
+            }
+            is PollRepository.EditPollResult.WrongStatus -> {
+                ErrorDto("Poll should have CREATED status, but it is ${result.status}")
+            }
+            PollRepository.EditPollResult.NoAccess -> {
+                ErrorDto("Only owner can change poll")
             }
         }
+        return resultDto.toResponse()
     }
 }

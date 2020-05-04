@@ -1,10 +1,10 @@
 package com.public.poll.module
 
-import com.public.poll.dao.UserDao
 import com.public.poll.dto.TokenDto
+import com.public.poll.dto.UserDto
 import com.public.poll.handler.auth.SignInHandler
 import com.public.poll.handler.auth.SignUpHandler
-import com.public.poll.table.UserTable
+import com.public.poll.repositories.UserRepository
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -15,23 +15,24 @@ import io.ktor.request.receive
 import io.ktor.routing.post
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
-data class UserPrincipal(val user: UserDao) : Principal
+data class UserPrincipal(val user: UserDto) : Principal
 
-fun Application.authModule() {
+fun Application.authModule(kodein: Kodein) {
     install(Authentication) {
         basic {
             realm = "own realm for basic"
             validate { credentials ->
-                transaction {
-                    val user = UserDao.find { UserTable.name eq credentials.name }.firstOrNull()
-                    if (user != null && user.password.contentEquals(credentials.password)) {
-                        UserPrincipal(user)
-                    } else {
-                        null
-                    }
-                }
+                val userRepository by kodein.instance<UserRepository>()
+                val userDto = userRepository.findUserByCredential(
+                    UserRepository.Credentials(
+                        name = credentials.name,
+                        password = credentials.password
+                    )
+                )
+                userDto?.let { UserPrincipal(it) }
             }
         }
     }
@@ -42,12 +43,14 @@ fun Application.authModule() {
 
                 post("/signup") {
                     val token = call.receive<TokenDto>()
-                    call.commonRespond(SignUpHandler().handle(token))
+                    val handler by kodein.instance<SignUpHandler>()
+                    call.commonRespond(handler.handle(token))
                 }
 
                 post("/signin") {
                     val token = call.receive<TokenDto>()
-                    call.commonRespond(SignInHandler().handle(token))
+                    val handler by kodein.instance<SignInHandler>()
+                    call.commonRespond(handler.handle(token))
                 }
             }
         }
