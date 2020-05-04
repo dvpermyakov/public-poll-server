@@ -1,15 +1,16 @@
 package com.public.poll.handler.poll.list
 
+import com.public.poll.dto.UserDto
 import com.public.poll.repositories.PollCollectionRepository
 import com.public.poll.response.CommonResponse
 import com.public.poll.response.toResponse
 
-class PollFeedHandler(
+class PollMyListHandler(
     private val pollCollectionRepository: PollCollectionRepository
 ) {
 
-    fun handle(): CommonResponse {
-        return pollCollectionRepository.getFeed().toResponse()
+    fun handle(userDto: UserDto): CommonResponse {
+        return pollCollectionRepository.getPollsByUser(userDto).toResponse()
     }
 
 }

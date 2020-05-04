@@ -1,6 +1,6 @@
 package com.public.poll.module
 
-import com.public.poll.dao.UserDao
+import com.public.poll.dto.UserDto
 import com.public.poll.response.CommonResponse
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.authentication
@@ -14,7 +14,7 @@ internal suspend fun ApplicationCall.commonRespond(commonResponse: CommonRespons
     }
 }
 
-internal fun ApplicationCall.getUser(): UserDao {
+internal fun ApplicationCall.getUser(): UserDto {
     return requireNotNull(authentication.principal<UserPrincipal>()).user
 }
 

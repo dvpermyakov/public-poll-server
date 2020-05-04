@@ -1,8 +1,6 @@
 package com.public.poll
 
-import com.public.poll.module.authModule
-import com.public.poll.module.databaseModule
-import com.public.poll.module.pollModule
+import com.public.poll.module.*
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -29,9 +27,11 @@ fun main() {
             )
         }
 
+        val kodein = kodeinModule()
         databaseModule()
-        authModule()
-        pollModule()
+        authModule(kodein)
+        maintenanceModule(kodein)
+        pollModule(kodein)
     }
 
     server.start(wait = true)

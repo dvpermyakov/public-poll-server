@@ -5,22 +5,7 @@ import com.public.poll.dao.PollDao
 import com.public.poll.dto.AnswerDto
 import com.public.poll.dto.PollDto
 
-class PollMapper {
-    fun map(pollEntity: PollDao): PollDto {
-        return PollDto(
-            id = pollEntity.id.value.toString(),
-            status = pollEntity.status,
-            question = pollEntity.question,
-            answers = pollEntity.answers.map { answerEntity -> map(answerEntity) },
-            engagementRequired = pollEntity.engagementRequired,
-            engagementCount = pollEntity.engagementCount.count()
-        )
-    }
-
-    fun map(answerEntity: PollAnswerDao): AnswerDto {
-        return AnswerDto(
-            id = answerEntity.id.value.toString(),
-            text = answerEntity.text
-        )
-    }
+interface PollMapper {
+    fun map(pollEntity: PollDao): PollDto
+    fun map(answerEntity: PollAnswerDao): AnswerDto
 }
