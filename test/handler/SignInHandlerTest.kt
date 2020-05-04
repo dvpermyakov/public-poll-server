@@ -24,7 +24,7 @@ class SignInHandlerTest {
     @Test
     fun `empty token`() {
         val tokenDto = TokenDto("")
-        val response = signInHandler.handle(tokenDto)
+//        val response = signInHandler.handle(tokenDto)
 
         assertEquals(
             response.status,
