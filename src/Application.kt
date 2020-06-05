@@ -1,6 +1,7 @@
 package com.public.poll
 
 import com.public.poll.module.*
+import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -13,7 +14,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.tomcat.Tomcat
 import kotlinx.serialization.json.Json
 
-fun main() {
+fun Application.main() {
     val server = embeddedServer(Tomcat, port = 8080) {
 
         install(DefaultHeaders)
