@@ -18,6 +18,15 @@ jobs:
       - run:
           name: Check dependencies
           command: ./gradlew dependencies
+      - run:
+          name: Increase version
+          command: |
+            git config --global user.name $GIT_USERNAME
+            git config --global user.email $GIT_USEREMAIL
+            git clone https://github.com/dvpermyakov/increment-version-bash.git
+            cd increment-version-bash/
+            chmod u+x ./increment.sh
+            ./increment.sh -r $CIRCLE_REPOSITORY -b $CIRCLE_BRANCH -m master -f version.txt
       - save_cache:
           paths:
             - ~/.gradle

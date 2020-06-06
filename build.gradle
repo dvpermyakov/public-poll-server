@@ -23,7 +23,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-version new File("version.txt").text
+version new File("version.txt").text.trim()
 
 mainClassName = "io.ktor.server.tomcat.EngineMain"
 
