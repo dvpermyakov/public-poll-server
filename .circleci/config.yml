@@ -29,17 +29,10 @@ jobs:
           name: Assemble build
           command: ./gradlew assemble
       - run:
-          name: Export version const
-          command: export VERSION=`cat version.txt`
-      - run:
-          name: Echo version const
-          command: echo $VERSION
-      - run:
-          name: Build docker image
-          command: docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
-      - run:
-          name: Docker login
-          command: echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
-      - run:
           name: Publish docker image
-          command: docker push dvpermyakov/public-poll:$VERSION
+          command: |
+            export VERSION=`cat version.txt`
+            echo $VERSION
+            docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
+            echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
+            docker push dvpermyakov/public-poll:$VERSION
