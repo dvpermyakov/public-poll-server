@@ -32,6 +32,9 @@ jobs:
           name: Export version const
           command: export VERSION=`cat version.txt`
       - run:
+          name: Echo version const
+          command: echo $VERSION
+      - run:
           name: Build docker image
           command: docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
       - run:
