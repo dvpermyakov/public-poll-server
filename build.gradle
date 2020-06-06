@@ -23,7 +23,6 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-group "com.public.handler.poll"
 version new File("version.txt").text
 
 mainClassName = "io.ktor.server.tomcat.EngineMain"

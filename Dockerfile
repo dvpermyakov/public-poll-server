@@ -1,14 +1,14 @@
 FROM openjdk:8-jre-alpine
 
-ENV VERSION 0.0.1
-ENV JAR_NAME public-poll-$VERSION.jar
 ENV APPLICATION_USER admin
-
 RUN adduser -D -g '' $APPLICATION_USER
 RUN mkdir /app
 RUN chown -R $APPLICATION_USER /app
 
 USER $APPLICATION_USER
+
+ARG VERSION
+ENV JAR_NAME public-poll-${VERSION}.jar
 
 COPY ./build/libs/$JAR_NAME /app/$JAR_NAME
 WORKDIR /app
