@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
 
-ENV APPLICATION_USER ktor
+ENV APPLICATION_USER admin
 RUN adduser -D -g '' $APPLICATION_USER
 
 RUN mkdir /app
