@@ -18,6 +18,11 @@ jobs:
       - run:
           name: Check dependencies
           command: ./gradlew dependencies
+      - run:
+          name: Increase version
+          command: |
+            git clone https://github.com/dvpermyakov/increment-version-bash.git
+            ./increment.sh
       - save_cache:
           paths:
             - ~/.gradle
