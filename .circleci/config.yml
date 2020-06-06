@@ -32,5 +32,8 @@ jobs:
           name: Build docker image
           command: docker build -t dvpermyakov/public-poll:0.0.1 .
       - run:
+          name: Docker login
+          command: echo $DOCKER_TOKEN | docker login -username $DOCKER_USER
+      - run:
           name: Publish docker image
           command: docker push dvpermyakov/public-poll:0.0.1
