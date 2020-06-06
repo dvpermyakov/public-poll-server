@@ -30,7 +30,7 @@ jobs:
           command: ./gradlew assemble
       - run:
           name: Export version const
-          command: VERSION=`cat version.txt`
+          command: export VERSION=`cat version.txt`
       - run:
           name: Build docker image
           command: docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
