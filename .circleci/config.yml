@@ -21,6 +21,8 @@ jobs:
       - run:
           name: Increase version
           command: |
+            git config user.name $GIT_USERNAME
+            git config user.email $GIT_USEREMAIL
             git clone https://github.com/dvpermyakov/increment-version-bash.git
             cd increment-version-bash/
             chmod u+x ./increment.sh
