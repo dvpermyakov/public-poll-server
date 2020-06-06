@@ -28,4 +28,4 @@ jobs:
           command: ./gradlew assemble
       - run:
           name: Build docker image
-          command: docker build -t dvpermyakov/public-poll:$CIRCLE_BRANCH .
+          command: docker build -t dvpermyakov/public-poll:0.0.1 .
