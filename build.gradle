@@ -26,7 +26,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-version new File("version.txt").text.trim()
+def currentVersion = new File("version.txt").text.trim()
 
 mainClassName = "io.ktor.server.tomcat.EngineMain"
 
@@ -65,7 +65,7 @@ dependencies {
 shadowJar {
     baseName = "public-poll-server"
     classifier = null
-    version = version
+    version = currentVersion
 }
 
 publishing {
@@ -98,10 +98,10 @@ bintray {
         setLicenses("MIT")
 
         version {
-            name = version
+            name = currentVersion
             desc = ""
             released = new Date()
-            vcsTag = version
+            vcsTag = currentVersion
         }
     }
 }
