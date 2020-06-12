@@ -38,12 +38,11 @@ jobs:
           name: Assemble build
           command: ./gradlew assemble
       - run:
-          name: Publish docker image
+          name: Publish Maven artifact
+          command: ./gradlew publish
+      - run:
+          name: Upload to Bintray
           command: |
             if [ "$CIRCLE_BRANCH" = "master" ]; then
-              export VERSION=`cat version.txt`
-              echo $VERSION
-              docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
-              echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
-              docker push dvpermyakov/public-poll:$VERSION
+              ./gradlew bintrayUpload
             fi
