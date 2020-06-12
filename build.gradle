@@ -72,7 +72,7 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->
             group = "com.dvpermyakov"
-            version = version
+            version = currentVersion
             artifactId = "public-poll-server"
             project.shadow.component(publication)
         }
