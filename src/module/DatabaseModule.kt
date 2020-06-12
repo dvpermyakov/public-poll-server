@@ -9,10 +9,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun databaseModule() {
     Database.connect(
-        url = "jdbc:h2:~/test",
-        driver = "org.h2.Driver",
+        url = "jdbc:postgresql://0.0.0.0:5432/database",
         user = "root",
-        password = ""
+        password = "password"
     )
     transaction {
         addLogger(StdOutSqlLogger)
