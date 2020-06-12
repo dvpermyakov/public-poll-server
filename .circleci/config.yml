@@ -43,9 +43,7 @@ jobs:
       - run:
           name: Upload to Bintray
           command: |
-#            if [ "$CIRCLE_BRANCH" = "master" ]; then
-              ./gradlew bintrayUpload
-#            fi
+            ./gradlew bintrayUpload
       - run:
           name: Publish docker image
           command: |
