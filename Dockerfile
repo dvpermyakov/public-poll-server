@@ -7,8 +7,9 @@ RUN chown -R $APPLICATION_USER /app
 
 USER $APPLICATION_USER
 
+# don't use local files! need to download it from maven repo
 ARG VERSION
-ENV JAR_NAME public-poll-${VERSION}.jar
+ENV JAR_NAME public-poll-server-${VERSION}.jar
 
 COPY ./build/libs/$JAR_NAME /app/$JAR_NAME
 WORKDIR /app
