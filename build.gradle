@@ -89,6 +89,8 @@ bintray {
     key = System.getenv("BINTRAY_KEY")
     publish = true
 
+    setPublications("MavenPublication")
+
     pkg {
         repo = "maven"
         name = "com.dvpermyakov.public-poll-sever"
