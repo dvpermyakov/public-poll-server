@@ -38,6 +38,15 @@ jobs:
           name: Assemble build
           command: ./gradlew assemble
       - run:
+          name: Publish Maven artifact
+          command: ./gradlew publish
+      - run:
+          name: Upload to Bintray
+          command: |
+#            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              ./gradlew bintrayUpload
+#            fi
+      - run:
           name: Publish docker image
           command: |
             if [ "$CIRCLE_BRANCH" = "master" ]; then
