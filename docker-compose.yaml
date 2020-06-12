@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+  application:
+    build:
+      context: .
+      args:
+        VERSION: ${VERSION}
+    restart: always
+    ports:
+      - "8080:8080"
+
+volumes:
+  database-data:

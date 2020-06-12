@@ -40,8 +40,10 @@ jobs:
       - run:
           name: Publish docker image
           command: |
-            export VERSION=`cat version.txt`
-            echo $VERSION
-            docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
-            echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
-            docker push dvpermyakov/public-poll:$VERSION
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              export VERSION=`cat version.txt`
+              echo $VERSION
+              docker build -t dvpermyakov/public-poll:$VERSION . --build-arg VERSION=$VERSION
+              echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
+              docker push dvpermyakov/public-poll:$VERSION
+            fi
