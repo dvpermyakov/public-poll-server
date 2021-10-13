@@ -5,12 +5,12 @@ import com.public.poll.dto.TokenDto
 import com.public.poll.dto.UserDto
 import com.public.poll.handler.auth.SignUpHandler
 import com.public.poll.repositories.UserRepository
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class SignUpHandlerTest {
 

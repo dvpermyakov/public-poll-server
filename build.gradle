@@ -56,6 +56,8 @@ dependencies {
     implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"
     implementation "org.jetbrains.exposed:exposed-jodatime:$exposed_version"
 
+    compile "org.postgresql:postgresql:$postgresql_version"
+
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
