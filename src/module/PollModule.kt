@@ -6,17 +6,14 @@ import com.public.poll.handler.poll.action.PollVoteHandler
 import com.public.poll.handler.poll.crud.PollCreateHandler
 import com.public.poll.handler.poll.crud.PollEditHandler
 import com.public.poll.handler.poll.crud.PollGetHandler
+import com.public.poll.handler.poll.crud.PollSearchHandler
 import com.public.poll.handler.poll.list.PollFeedHandler
 import com.public.poll.handler.poll.list.PollHistoryHandler
 import com.public.poll.handler.poll.list.PollMyListHandler
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.auth.authenticate
-import io.ktor.request.receive
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
-import io.ktor.routing.routing
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.request.*
+import io.ktor.routing.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -34,6 +31,13 @@ fun Application.pollModule(kodein: Kodein) {
                     val handler by kodein.instance<PollGetHandler>()
                     call.commonRespond(
                         handler.handle(pollId = call.getPollId())
+                    )
+                }
+
+                get("/search") {
+                    val handler by kodein.instance<PollSearchHandler>()
+                    call.commonRespond(
+                        handler.handle(query = call.getQuery())
                     )
                 }
 

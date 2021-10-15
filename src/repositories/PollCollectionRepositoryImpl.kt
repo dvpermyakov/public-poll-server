@@ -43,4 +43,18 @@ class PollCollectionRepositoryImpl(
             )
         }
     }
+
+    override fun getPollsByIds(ids: List<String>): PollCollectionDto {
+        val pollIds = ids.map { it.toUUID() }
+        return transaction {
+            PollCollectionDto(items = PollDao
+                .find {
+                    (PollTable.id inList pollIds)
+                }
+                .map { pollEntity ->
+                    pollMapper.map(pollEntity)
+                }
+            )
+        }
+    }
 }
