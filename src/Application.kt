@@ -21,6 +21,7 @@ fun main() {
         authModule(kodein)
         maintenanceModule(kodein)
         pollModule(kodein)
+        roomModule()
     }
 
     server.start(wait = true)
