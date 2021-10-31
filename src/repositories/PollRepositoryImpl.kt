@@ -15,7 +15,8 @@ import org.joda.time.DateTime
 import java.util.*
 
 class PollRepositoryImpl(
-    private val pollMapper: PollMapper
+    private val pollMapper: PollMapper,
+    private val pollSearchRepository: PollSearchRepository
 ) : PollRepository {
 
     override fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto {
@@ -34,6 +35,10 @@ class PollRepositoryImpl(
                     text = answer
                 }
             }
+            pollSearchRepository.addPollToSearch(
+                id = pollEntity.id.value.toString(),
+                question = pollEntity.question
+            )
             pollMapper.map(pollEntity)
         }
     }
