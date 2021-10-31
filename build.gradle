@@ -62,7 +62,8 @@ dependencies {
     implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"
     implementation "org.jetbrains.exposed:exposed-jodatime:$exposed_version"
 
-    implementation "org.apache.kafka:kafka-clients:3.0.0"
+    implementation "org.apache.kafka:kafka-clients:$kafka_version"
+    implementation "redis.clients:jedis:$jedis_version"
 
     compile "org.postgresql:postgresql:$postgresql_version"
 
