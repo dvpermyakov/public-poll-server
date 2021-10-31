@@ -32,9 +32,10 @@ fun kodeinModule() = Kodein {
     bind<PollMapper>() with singleton { PollMapperImpl() }
 
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
-    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance()) }
+    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance(), instance()) }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
     bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
+    bind<PollBrokerRepository>() with singleton { PollBrokerRepositoryImpl() }
 
     bind<SignInHandler>() with provider { SignInHandler(instance()) }
     bind<SignUpHandler>() with provider { SignUpHandler(instance()) }

@@ -16,7 +16,8 @@ import java.util.*
 
 class PollRepositoryImpl(
     private val pollMapper: PollMapper,
-    private val pollSearchRepository: PollSearchRepository
+    private val pollSearchRepository: PollSearchRepository,
+    private val pollBrokerRepository: PollBrokerRepository
 ) : PollRepository {
 
     override fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto {
@@ -36,6 +37,10 @@ class PollRepositoryImpl(
                 }
             }
             pollSearchRepository.addPollToSearch(
+                id = pollEntity.id.value.toString(),
+                question = pollEntity.question
+            )
+            pollBrokerRepository.addPoll(
                 id = pollEntity.id.value.toString(),
                 question = pollEntity.question
             )
