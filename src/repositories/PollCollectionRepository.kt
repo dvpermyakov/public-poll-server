@@ -6,4 +6,5 @@ import com.public.poll.dto.UserDto
 interface PollCollectionRepository {
     fun getPollsByUser(userDto: UserDto): PollCollectionDto
     fun getFeed(): PollCollectionDto
+    fun getPollsByIds(ids: List<String>): PollCollectionDto
 }

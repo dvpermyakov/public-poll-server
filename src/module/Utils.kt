@@ -2,9 +2,9 @@ package com.public.poll.module
 
 import com.public.poll.dto.UserDto
 import com.public.poll.response.CommonResponse
-import io.ktor.application.ApplicationCall
-import io.ktor.auth.authentication
-import io.ktor.response.respond
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.response.*
 
 internal suspend fun ApplicationCall.commonRespond(commonResponse: CommonResponse) {
     if (commonResponse.dto != null) {
@@ -24,4 +24,8 @@ internal fun ApplicationCall.getPollId(): String {
 
 internal fun ApplicationCall.getAnswerId(): String {
     return requireNotNull(parameters["answerId"])
+}
+
+internal fun ApplicationCall.getQuery(): String {
+    return requireNotNull(parameters["query"])
 }

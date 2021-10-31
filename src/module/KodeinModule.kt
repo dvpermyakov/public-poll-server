@@ -1,5 +1,7 @@
 package com.public.poll.module
 
+import com.public.poll.client.HttpClientProvider
+import com.public.poll.client.HttpClientProviderImpl
 import com.public.poll.handler.auth.SignInHandler
 import com.public.poll.handler.auth.SignUpHandler
 import com.public.poll.handler.poll.action.PollApproveHandler
@@ -9,6 +11,7 @@ import com.public.poll.handler.poll.action.PollVoteHandler
 import com.public.poll.handler.poll.crud.PollCreateHandler
 import com.public.poll.handler.poll.crud.PollEditHandler
 import com.public.poll.handler.poll.crud.PollGetHandler
+import com.public.poll.handler.poll.crud.PollSearchHandler
 import com.public.poll.handler.poll.list.PollFeedHandler
 import com.public.poll.handler.poll.list.PollHistoryHandler
 import com.public.poll.handler.poll.list.PollMyListHandler
@@ -24,12 +27,14 @@ import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
 fun kodeinModule() = Kodein {
+    bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
     bind<UserMapper>() with singleton { UserMapperImpl() }
     bind<PollMapper>() with singleton { PollMapperImpl() }
 
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
-    bind<PollRepository>() with singleton { PollRepositoryImpl(instance()) }
+    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance()) }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
+    bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
 
     bind<SignInHandler>() with provider { SignInHandler(instance()) }
     bind<SignUpHandler>() with provider { SignUpHandler(instance()) }
@@ -43,4 +48,5 @@ fun kodeinModule() = Kodein {
     bind<PollHistoryHandler>() with provider { PollHistoryHandler(instance()) }
     bind<PollMyListHandler>() with provider { PollMyListHandler(instance()) }
     bind<PollApproveHandler>() with provider { PollApproveHandler(instance()) }
+    bind<PollSearchHandler>() with provider { PollSearchHandler(instance()) }
 }
