@@ -1,5 +1,6 @@
 package com.public.poll.repositories
 
+import com.public.poll.cache.Cache
 import com.public.poll.dao.*
 import com.public.poll.dto.CreatedPollDto
 import com.public.poll.dto.PollDto
@@ -17,7 +18,8 @@ import java.util.*
 class PollRepositoryImpl(
     private val pollMapper: PollMapper,
     private val pollSearchRepository: PollSearchRepository,
-    private val pollBrokerRepository: PollBrokerRepository
+    private val pollBrokerRepository: PollBrokerRepository,
+    private val cache: Cache
 ) : PollRepository {
 
     override fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto {
@@ -44,12 +46,18 @@ class PollRepositoryImpl(
                 id = pollEntity.id.value.toString(),
                 question = pollEntity.question
             )
-            pollMapper.map(pollEntity)
+            pollMapper.map(pollEntity).also { pollDto ->
+                cache.putPoll(pollDto.id, pollDto)
+            }
         }
     }
 
     override fun getPoll(pollId: String): PollRepository.GetPollResult {
         val pollUuid = getSafeUuid(pollId) ?: return PollRepository.GetPollResult.WrongIdFormat
+        val pollFromCache = cache.getPoll(pollId)
+        if (pollFromCache != null) {
+            return PollRepository.GetPollResult.Success(pollFromCache)
+        }
         return transaction {
             PollDao.findById(pollUuid)?.let { pollEntity ->
                 PollRepository.GetPollResult.Success(pollMapper.map(pollEntity))
@@ -87,7 +95,9 @@ class PollRepositoryImpl(
                             }
                         }
                         PollRepository.EditPollResult.Success(
-                            pollMapper.map(pollEntity)
+                            pollMapper.map(pollEntity).also { pollDto ->
+                                cache.putPoll(pollDto.id, pollDto)
+                            }
                         )
                     }
                 }
