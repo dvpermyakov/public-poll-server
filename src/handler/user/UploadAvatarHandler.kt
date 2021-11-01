@@ -12,7 +12,7 @@ class UploadAvatarHandler(private val fileProvider: FileProvider) {
         userDto: UserDto,
         inputStream: InputStream
     ): CommonResponse {
-        fileProvider.saveFile("avatar_${userDto.id}.jpg", inputStream.readAllBytes())
+        fileProvider.saveFile("avatar_${userDto.id}.jpg", inputStream.readBytes())
         return UploadDto(success = true).toResponse()
     }
 }
