@@ -26,6 +26,10 @@ internal fun ApplicationCall.getAnswerId(): String {
     return requireNotNull(parameters["answerId"])
 }
 
+internal fun ApplicationCall.getUserId(): String {
+    return requireNotNull(parameters["userId"])
+}
+
 internal fun ApplicationCall.getQuery(): String {
     return requireNotNull(parameters["query"])
 }

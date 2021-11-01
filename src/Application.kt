@@ -22,6 +22,7 @@ fun main() {
         maintenanceModule(kodein)
         pollModule(kodein)
         roomModule()
+        userModule(kodein)
     }
 
     server.start(wait = true)
