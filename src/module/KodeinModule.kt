@@ -4,6 +4,8 @@ import com.public.poll.cache.Cache
 import com.public.poll.cache.CacheImpl
 import com.public.poll.client.HttpClientProvider
 import com.public.poll.client.HttpClientProviderImpl
+import com.public.poll.files.FileProvider
+import com.public.poll.files.FileProviderImpl
 import com.public.poll.handler.auth.SignInHandler
 import com.public.poll.handler.auth.SignUpHandler
 import com.public.poll.handler.poll.action.PollApproveHandler
@@ -31,12 +33,13 @@ import org.kodein.di.generic.singleton
 fun kodeinModule() = Kodein {
     bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
     bind<Cache>() with singleton { CacheImpl() }
+    bind<FileProvider>() with singleton { FileProviderImpl() }
 
     bind<UserMapper>() with singleton { UserMapperImpl() }
     bind<PollMapper>() with singleton { PollMapperImpl() }
 
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
-    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance(), instance(), instance()) }
+    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
     bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
     bind<PollBrokerRepository>() with singleton { PollBrokerRepositoryImpl() }
