@@ -19,6 +19,8 @@ import com.public.poll.handler.poll.crud.PollSearchHandler
 import com.public.poll.handler.poll.list.PollFeedHandler
 import com.public.poll.handler.poll.list.PollHistoryHandler
 import com.public.poll.handler.poll.list.PollMyListHandler
+import com.public.poll.handler.user.RetrieveAvatarHandler
+import com.public.poll.handler.user.UploadAvatarHandler
 import com.public.poll.mapper.PollMapper
 import com.public.poll.mapper.PollMapperImpl
 import com.public.poll.mapper.UserMapper
@@ -39,7 +41,15 @@ fun kodeinModule() = Kodein {
     bind<PollMapper>() with singleton { PollMapperImpl() }
 
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
-    bind<PollRepository>() with singleton { PollRepositoryImpl(instance(), instance(), instance(), instance(), instance()) }
+    bind<PollRepository>() with singleton {
+        PollRepositoryImpl(
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
     bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
     bind<PollBrokerRepository>() with singleton { PollBrokerRepositoryImpl() }
@@ -57,4 +67,6 @@ fun kodeinModule() = Kodein {
     bind<PollMyListHandler>() with provider { PollMyListHandler(instance()) }
     bind<PollApproveHandler>() with provider { PollApproveHandler(instance()) }
     bind<PollSearchHandler>() with provider { PollSearchHandler(instance()) }
+    bind<UploadAvatarHandler>() with provider { UploadAvatarHandler(instance()) }
+    bind<RetrieveAvatarHandler>() with provider { RetrieveAvatarHandler(instance()) }
 }
