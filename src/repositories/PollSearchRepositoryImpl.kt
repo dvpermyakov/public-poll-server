@@ -2,6 +2,7 @@ package com.public.poll.repositories
 
 import com.public.poll.client.HttpClientProvider
 import com.public.poll.client.SearchUri
+import com.public.poll.client.SearchUri.AUTH_HEADER
 import com.public.poll.dto.PollSearchAddRequestDto
 import com.public.poll.dto.PollSearchAddResponseDto
 import com.public.poll.dto.PollSearchRequestDto
@@ -23,6 +24,7 @@ class PollSearchRepositoryImpl(
                         method = HttpMethod.Get
                         contentType(ContentType.Application.Json)
                         body = PollSearchRequestDto.create(query)
+                        header("Authorization", AUTH_HEADER)
                     }
                     val ids = response.hits.hits.flatMap { hit -> hit.fields.id }
                     PollSearchRepository.SearchPollResult.Success(
@@ -47,6 +49,7 @@ class PollSearchRepositoryImpl(
                             id = id,
                             question = question
                         )
+                        header("Authorization", AUTH_HEADER)
                     }
                     response._id.isNotEmpty()
                 }

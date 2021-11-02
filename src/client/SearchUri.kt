@@ -1,5 +1,6 @@
 package com.public.poll.client
 
 object SearchUri {
-    const val HOST = "http://localhost:9200"
+    val HOST: String = System.getenv("ELASTIC_INSTANCE_URL")
+    val AUTH_HEADER: String = System.getenv("ELASTIC_AUTH_BASIC_TOKEN")
 }
