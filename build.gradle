@@ -65,7 +65,9 @@ dependencies {
     implementation "org.apache.kafka:kafka-clients:$kafka_version"
     implementation "redis.clients:jedis:$jedis_version"
 
-    compile "org.postgresql:postgresql:$postgresql_version"
+    implementation "org.postgresql:postgresql:$postgresql_version"
+    implementation "com.zaxxer:HikariCP:$hikari_version"
+    implementation "com.google.cloud.sql:postgres-socket-factory:$postgresql_cloud"
 
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
 
