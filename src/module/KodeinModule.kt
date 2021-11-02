@@ -25,6 +25,8 @@ import com.public.poll.mapper.PollMapper
 import com.public.poll.mapper.PollMapperImpl
 import com.public.poll.mapper.UserMapper
 import com.public.poll.mapper.UserMapperImpl
+import com.public.poll.producer.Producer
+import com.public.poll.producer.ProducerImpl
 import com.public.poll.repositories.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -36,6 +38,7 @@ fun kodeinModule() = Kodein {
     bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
     bind<Cache>() with singleton { CacheImpl() }
     bind<FileProvider>() with singleton { FileProviderImpl() }
+    bind<Producer>() with singleton { ProducerImpl() }
 
     bind<UserMapper>() with singleton { UserMapperImpl() }
     bind<PollMapper>() with singleton { PollMapperImpl() }
@@ -52,7 +55,7 @@ fun kodeinModule() = Kodein {
     }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
     bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
-    bind<PollBrokerRepository>() with singleton { PollBrokerRepositoryImpl() }
+    bind<PollBrokerRepository>() with singleton { PollBrokerRepositoryImpl(instance()) }
 
     bind<SignInHandler>() with provider { SignInHandler(instance()) }
     bind<SignUpHandler>() with provider { SignUpHandler(instance()) }
