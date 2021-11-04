@@ -7,7 +7,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
-        classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:$artifactory_plugin_version"
     }
 }
 
@@ -16,7 +15,6 @@ apply plugin: "application"
 apply plugin: "kotlinx-serialization"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "maven-publish"
-apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -41,7 +39,7 @@ repositories {
     mavenLocal()
     jcenter()
     maven {
-        url "artifactregistry://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
+        url "https://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
         credentials {
             username = "_json_key_base64"
             password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
@@ -102,7 +100,7 @@ publishing {
     }
     repositories {
         maven {
-            url "artifactregistry://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
+            url "https://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
             credentials {
                 username = "_json_key_base64"
                 password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
