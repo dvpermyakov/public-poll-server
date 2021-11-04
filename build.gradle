@@ -7,7 +7,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
     }
 }
 
@@ -16,7 +15,6 @@ apply plugin: "application"
 apply plugin: "kotlinx-serialization"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "maven-publish"
-apply plugin: "com.jfrog.bintray"
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -92,29 +90,11 @@ publishing {
     }
     repositories {
         maven {
-            url "$buildDir/repository"
-        }
-    }
-}
-
-bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_KEY")
-    publish = true
-
-    setPublications("shadow")
-
-    pkg {
-        repo = "maven"
-        name = "com.dvpermyakov.public-poll-sever"
-        vcsUrl = "https://github.com/dvpermyakov/public-poll-server"
-        setLicenses("MIT")
-
-        version {
-            name = currentVersion
-            desc = ""
-            released = new Date()
-            vcsTag = currentVersion
+            url System.getenv("ARTIFACT_REGISTRY_URL")
+            credentials {
+                username = "_json_key_base64"
+                password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
+            }
         }
     }
 }
