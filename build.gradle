@@ -7,7 +7,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintray_version"
+        classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:$artifactory_plugin_version"
     }
 }
 
@@ -16,7 +16,7 @@ apply plugin: "application"
 apply plugin: "kotlinx-serialization"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "maven-publish"
-apply plugin: "com.jfrog.bintray"
+apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
 
 sourceCompatibility = 1.8
 compileKotlin {
@@ -40,6 +40,16 @@ sourceSets {
 repositories {
     mavenLocal()
     jcenter()
+    maven {
+        url "artifactregistry://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
+        credentials {
+            username = "_json_key_base64"
+            password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
 }
 
 dependencies {
@@ -92,29 +102,11 @@ publishing {
     }
     repositories {
         maven {
-            url "$buildDir/repository"
-        }
-    }
-}
-
-bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_KEY")
-    publish = true
-
-    setPublications("shadow")
-
-    pkg {
-        repo = "maven"
-        name = "com.dvpermyakov.public-poll-sever"
-        vcsUrl = "https://github.com/dvpermyakov/public-poll-server"
-        setLicenses("MIT")
-
-        version {
-            name = currentVersion
-            desc = ""
-            released = new Date()
-            vcsTag = currentVersion
+            url "artifactregistry://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
+            credentials {
+                username = "_json_key_base64"
+                password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
+            }
         }
     }
 }
