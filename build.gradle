@@ -38,16 +38,6 @@ sourceSets {
 repositories {
     mavenLocal()
     jcenter()
-    maven {
-        url "https://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
-        credentials {
-            username = "_json_key_base64"
-            password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
-        }
-        authentication {
-            basic(BasicAuthentication)
-        }
-    }
 }
 
 dependencies {
@@ -100,7 +90,7 @@ publishing {
     }
     repositories {
         maven {
-            url "https://europe-north1-maven.pkg.dev/public-poll-330912/public-poll-web-api"
+            url System.getenv("ARTIFACT_REGISTRY_URL")
             credentials {
                 username = "_json_key_base64"
                 password = System.getenv("ARTIFACT_REGISTRY_PASSWORD")
