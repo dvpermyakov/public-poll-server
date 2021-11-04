@@ -41,5 +41,5 @@ jobs:
           name: Publish Maven artifact
           command: |
             if [ "$CIRCLE_BRANCH" = "maven-fix" ]; then
-              ./gradlew bintrayUpload
+              ./gradlew publish
             fi
