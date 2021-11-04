@@ -40,6 +40,6 @@ jobs:
       - run:
           name: Publish Maven artifact
           command: |
-            if [ "$CIRCLE_BRANCH" = "maven-fix" ]; then
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
               ./gradlew publish
             fi
