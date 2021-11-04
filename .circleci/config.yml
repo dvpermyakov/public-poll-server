@@ -39,10 +39,7 @@ jobs:
           command: ./gradlew assemble
       - run:
           name: Publish Maven artifact
-          command: ./gradlew publish
-      - run:
-          name: Upload to Bintray
           command: |
-            if [ "$CIRCLE_BRANCH" = "master" ]; then
+            if [ "$CIRCLE_BRANCH" = "maven-fix" ]; then
               ./gradlew bintrayUpload
             fi
