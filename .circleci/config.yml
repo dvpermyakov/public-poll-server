@@ -43,3 +43,7 @@ jobs:
             if [ "$CIRCLE_BRANCH" = "master" ]; then
               ./gradlew publish
             fi
+      - run:
+          name: Build Docker image
+          command: |
+            ./docker_build.sh
