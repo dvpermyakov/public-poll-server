@@ -28,15 +28,18 @@ import com.public.poll.mapper.UserMapperImpl
 import com.public.poll.producer.Producer
 import com.public.poll.producer.ProducerImpl
 import com.public.poll.repositories.*
+import io.ktor.application.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
+import org.slf4j.Logger
 
-fun kodeinModule() = Kodein {
+fun Application.kodeinModule() = Kodein {
+    bind<Logger>() with singleton { log }
     bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
-    bind<Cache>() with singleton { CacheImpl() }
+    bind<Cache>() with singleton { CacheImpl(instance()) }
     bind<FileProvider>() with singleton { FileProviderImpl() }
     bind<Producer>() with singleton { ProducerImpl() }
 

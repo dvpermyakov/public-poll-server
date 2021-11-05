@@ -16,6 +16,6 @@ class FileProviderImpl : FileProvider {
     }
 
     companion object {
-        private const val DEFAULT_FILE_SYSTEM_PATH = "/Users/dmitriip/server_poll/"
+        private const val DEFAULT_FILE_SYSTEM_PATH = "/server_poll_fs/"
     }
 }
