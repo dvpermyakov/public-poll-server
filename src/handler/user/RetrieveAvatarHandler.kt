@@ -5,7 +5,7 @@ import java.io.File
 
 class RetrieveAvatarHandler(private val fileProvider: FileProvider) {
 
-    fun handle(userId: String): File? {
+    fun handle(userId: String): File {
         return fileProvider.getFile("avatar_$userId.jpg")
     }
 

@@ -11,7 +11,7 @@ class FileProviderImpl : FileProvider {
         }
     }
 
-    override fun getFile(path: String): File? {
+    override fun getFile(path: String): File {
         return File("$DEFAULT_FILE_SYSTEM_PATH$path")
     }
 
