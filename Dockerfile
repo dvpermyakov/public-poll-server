@@ -25,7 +25,7 @@ ENV ELASTIC_INSTANCE_URL $ELASTIC_INSTANCE_URL
 
 ARG VERSION
 ENV JAR_NAME public-poll-server-${VERSION}.jar
-COPY ../build/libs/$JAR_NAME /app/$JAR_NAME
+COPY build/libs/$JAR_NAME /app/$JAR_NAME
 WORKDIR /app
 
 CMD java -server -jar $JAR_NAME
