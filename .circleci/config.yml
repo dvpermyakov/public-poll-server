@@ -49,5 +49,6 @@ jobs:
       - run:
           name: Build Docker image
           command: |
+            export VERSION=`cat version.txt`
             chmod u+x ./docker_build.sh
             ./docker_build.sh
