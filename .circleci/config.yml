@@ -53,4 +53,4 @@ jobs:
             chmod u+x ./docker_build.sh
             ./docker_build.sh
             gcloud auth configure-docker "$DOCKER_IMAGE_INSTANCE"
-            docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
+            docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
