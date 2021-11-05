@@ -1,7 +1,9 @@
 package com.public.poll.module
 
+import com.public.poll.dto.ErrorDto
 import com.public.poll.handler.user.RetrieveAvatarHandler
 import com.public.poll.handler.user.UploadAvatarHandler
+import com.public.poll.response.toResponse
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.content.*
@@ -36,7 +38,11 @@ fun Application.userModule(kodein: Kodein) {
                 get("/avatar/{userId}.jpg") {
                     val handler by kodein.instance<RetrieveAvatarHandler>()
                     val file = handler.handle(userId = call.getUserId())
-                    call.respondFile(file)
+                    if (file != null) {
+                        call.respondFile(file)
+                    } else {
+                        call.commonRespond(ErrorDto("not file found").toResponse())
+                    }
                 }
             }
         }

@@ -5,14 +5,15 @@ import java.io.File
 class FileProviderImpl : FileProvider {
 
     override fun saveFile(path: String, data: ByteArray) {
-        val file = File("$DEFAULT_FILE_SYSTEM_PATH$path")
-        file.outputStream().use { stream ->
-            stream.write(data)
-        }
+//        val file = File("$DEFAULT_FILE_SYSTEM_PATH$path")
+//        file.outputStream().use { stream ->
+//            stream.write(data)
+//        }
     }
 
-    override fun getFile(path: String): File {
-        return File("$DEFAULT_FILE_SYSTEM_PATH$path")
+    override fun getFile(path: String): File? {
+        return null
+//        return File("$DEFAULT_FILE_SYSTEM_PATH$path")
     }
 
     companion object {

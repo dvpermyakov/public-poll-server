@@ -7,7 +7,7 @@ import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.tomcat.*
 
-fun main() {
+fun Application.main() {
     val server = embeddedServer(Tomcat, port = 8080) {
 
         install(DefaultHeaders)
