@@ -8,9 +8,12 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
-      - run: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+      - run:
+          name: Google cloud authrization
+          command: |
+            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud auth configure-docker "$DOCKER_IMAGE_INSTANCE"
       - checkout
       - setup_remote_docker:
           docker_layer_caching: false
@@ -52,5 +55,7 @@ jobs:
             export VERSION=`cat version.txt`
             chmod u+x ./docker_build.sh
             ./docker_build.sh
-            gcloud auth configure-docker "$DOCKER_IMAGE_INSTANCE"
+      - run:
+          name: Push Docker image
+          command: |
             docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
