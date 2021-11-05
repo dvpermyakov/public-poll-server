@@ -2,12 +2,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: google/cloud-sdk
     working_directory: ~/code
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
     steps:
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
       - checkout
       - setup_remote_docker:
           docker_layer_caching: false
@@ -46,4 +49,5 @@ jobs:
       - run:
           name: Build Docker image
           command: |
+            chmod u+x ./docker_build.sh
             ./docker_build.sh
