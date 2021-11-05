@@ -49,7 +49,7 @@ class PollRepositoryImpl(
                 question = pollEntity.question
             )
             pollMapper.map(pollEntity).also { pollDto ->
-                fileProvider.saveFile("/questions_${pollDto.id}", pollDto.question.toByteArray())
+                fileProvider.saveFile("questions_${pollDto.id}", pollDto.question.toByteArray())
                 cache.putPoll(pollDto.id, pollDto)
             }
         }
