@@ -11,6 +11,7 @@ class CacheImpl : Cache {
     private val jedis = Jedis(HostAndPort(System.getenv("REDIS_IP_ADDRESS"), 6379))
 
     override fun putPoll(key: String, value: PollDto) {
+        println("ip address = ${System.getenv("REDIS_IP_ADDRESS")}")
         val json = Json.encodeToString(value)
         jedis.set(key, json)
     }
