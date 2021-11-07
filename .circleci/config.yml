@@ -65,4 +65,4 @@ jobs:
       - run:
           name: Create new Cloud Run image
           command: |
-            gcloud run services replace cloud-run-config.yml
+            ./cloud-run-deploy.sh
