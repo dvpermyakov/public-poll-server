@@ -58,7 +58,5 @@ jobs:
       - run:
           name: Push Docker image
           command: |
-            export VERSION=`cat version.txt`
-#            if [ "$CIRCLE_BRANCH" = "master" ]; then
-              docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
-#            fi
+            export VERSION=`cat version.txt`=
+            docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
