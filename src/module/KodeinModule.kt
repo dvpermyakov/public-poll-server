@@ -39,7 +39,7 @@ import org.slf4j.Logger
 fun Application.kodeinModule() = Kodein {
     bind<Logger>() with singleton { log }
     bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
-    bind<Cache>() with singleton { CacheImpl(instance()) }
+    bind<Cache>() with singleton { CacheImpl() }
     bind<FileProvider>() with singleton { FileProviderImpl() }
     bind<Producer>() with singleton { ProducerImpl() }
 
