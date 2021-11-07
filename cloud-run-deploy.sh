@@ -1,0 +1,3 @@
+gcloud --quiet run deploy $CLOUD_RUN_INSTANCE_NAME \
+  --image $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION \
+  --region $CLOUD_RUN_LOCATION
