@@ -65,4 +65,5 @@ jobs:
       - run:
           name: Create new Cloud Run image
           command: |
+            chmod u+x ./cloud-run-deploy.sh
             ./cloud-run-deploy.sh
