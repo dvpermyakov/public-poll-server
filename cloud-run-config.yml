@@ -1,0 +1,39 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: $CLOUD_RUN_INSTANCE_NAME
+  labels:
+    cloud.googleapis.com/location: $CLOUD_RUN_LOCATION
+spec:
+  template:
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: SQL_DATABASE_USER
+              value: "$SQL_DATABASE_USER"
+            - name: SQL_DATABASE_PASSWORD
+              value: "$SQL_DATABASE_PASSWORD"
+            - name: SQL_DATABASE_INSTANCE
+              value: "$SQL_DATABASE_INSTANCE"
+            - name: KAFKA_DATABASE_USER
+              value: "$KAFKA_DATABASE_USER"
+            - name: KAFKA_DATABASE_PASSWORD
+              value: "$KAFKA_DATABASE_PASSWORD"
+            - name: KAFKA_DATABASE_INSTANCE
+              value: "$KAFKA_DATABASE_INSTANCE"
+            - name: ELASTIC_AUTH_BASIC_TOKEN
+              value: "$ELASTIC_AUTH_BASIC_TOKEN"
+            - name: ELASTIC_INSTANCE_URL
+              value: "$ELASTIC_INSTANCE_URL"
+            - name: REDIS_IP_ADDRESS
+              value: "$REDIS_IP_ADDRESS"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
