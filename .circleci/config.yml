@@ -65,5 +65,6 @@ jobs:
       - run:
           name: Create new Cloud Run image
           command: |
+            export VERSION=`cat version.txt`
             chmod u+x ./cloud-run-deploy.sh
             ./cloud-run-deploy.sh
