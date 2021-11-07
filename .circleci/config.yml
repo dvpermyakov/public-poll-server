@@ -33,7 +33,6 @@ jobs:
             cd increment-version-bash/
             chmod u+x ./increment.sh
             ./increment.sh -r $CIRCLE_REPOSITORY -b $CIRCLE_BRANCH -m master -f version.txt
-            exit 1
       - save_cache:
           paths:
             - ~/.gradle
@@ -48,9 +47,9 @@ jobs:
           name: Publish Maven artifact
           command: |
             echo "verion increment doesn't work"
-#            if [ "$CIRCLE_BRANCH" = "master" ]; then
-#              ./gradlew publish
-#            fi
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              ./gradlew publish
+            fi
       - run:
           name: Build Docker image
           command: |
