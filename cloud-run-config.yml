@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: $CLOUD_RUN_INSTANCE_NAME
+  name: public-poll-docker-image
   labels:
     cloud.googleapis.com/location: europe-north1
 spec:
