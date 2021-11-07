@@ -69,4 +69,4 @@ jobs:
             chmod u+x ./cloud-run-deploy.sh
             if [ "$CIRCLE_BRANCH" = "master" ]; then
               ./cloud-run-deploy.sh
-            di
+            fi
