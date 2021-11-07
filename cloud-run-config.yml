@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: $CLOUD_RUN_INSTANCE_NAME
   labels:
-    cloud.googleapis.com/location: $CLOUD_RUN_LOCATION
+    cloud.googleapis.com/location: europe-north1
 spec:
   template:
     spec:
