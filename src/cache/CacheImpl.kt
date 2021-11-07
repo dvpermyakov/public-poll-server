@@ -10,6 +10,10 @@ import redis.clients.jedis.Jedis
 class CacheImpl(private val logger: Logger) : Cache {
     private val jedis = Jedis(HostAndPort(System.getenv("REDIS_IP_ADDRESS"), 6379))
 
+    init {
+        logger.info("redis ip address = ${System.getenv("REDIS_IP_ADDRESS")}")
+    }
+
     override fun putPoll(key: String, value: PollDto) {
         val json = Json.encodeToString(value)
         jedis.set(key, json)
