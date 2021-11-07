@@ -47,9 +47,9 @@ jobs:
           name: Publish Maven artifact
           command: |
             echo "verion increment doesn't work"
-#            if [ "$CIRCLE_BRANCH" = "master" ]; then
-#              ./gradlew publish
-#            fi
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              ./gradlew publish
+            fi
       - run:
           name: Build Docker image
           command: |
