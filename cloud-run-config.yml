@@ -10,7 +10,7 @@ spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-        - image: $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
+        - image: ${DOCKER_IMAGE_INSTANCE}/${DOCKER_IMAGE_NAME}:${VERSION}
           ports:
             - name: http1
               containerPort: 8080
