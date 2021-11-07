@@ -1,6 +1,7 @@
 package com.public.poll.cache
 
 import com.public.poll.dto.PollDto
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
@@ -20,8 +21,7 @@ class CacheImpl(private val logger: Logger) : Cache {
     }
 
     override fun getPoll(key: String): PollDto? {
-        return null
-//        val json = jedis.get(key)
-//        return json?.let { Json.decodeFromString<PollDto>(it) }
+        val json = jedis.get(key)
+        return json?.let { Json.decodeFromString<PollDto>(it) }
     }
 }
