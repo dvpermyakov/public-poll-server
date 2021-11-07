@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Publish Maven artifact
           command: |
-#            verion increment doesn't work
+            echo "verion increment doesn't work"
 #            if [ "$CIRCLE_BRANCH" = "master" ]; then
 #              ./gradlew publish
 #            fi
