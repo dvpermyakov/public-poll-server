@@ -67,4 +67,6 @@ jobs:
           command: |
             export VERSION=`cat version.txt`
             chmod u+x ./cloud-run-deploy.sh
-            ./cloud-run-deploy.sh
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              ./cloud-run-deploy.sh
+            di
