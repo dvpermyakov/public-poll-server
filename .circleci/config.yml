@@ -65,4 +65,4 @@ jobs:
           command: |
             export VERSION=`cat version.txt`
             chmod u+x ./cloud-run-deploy.sh
-            ./cloud-run-deploy.shfi
+            ./cloud-run-deploy.sh
