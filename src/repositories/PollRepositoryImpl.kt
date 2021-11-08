@@ -5,7 +5,7 @@ import com.public.poll.dao.*
 import com.public.poll.dto.CreatedPollDto
 import com.public.poll.dto.PollDto
 import com.public.poll.dto.UserDto
-import com.public.poll.files.FileProvider
+import com.public.poll.files.FileUploader
 import com.public.poll.mapper.PollMapper
 import com.public.poll.table.*
 import com.public.poll.utils.toUUID
@@ -21,7 +21,7 @@ class PollRepositoryImpl(
     private val pollSearchRepository: PollSearchRepository,
     private val pollBrokerRepository: PollBrokerRepository,
     private val cache: Cache,
-    private val fileProvider: FileProvider
+    private val fileProvider: FileUploader
 ) : PollRepository {
 
     override fun createPoll(userDto: UserDto, createdPollDto: CreatedPollDto): PollDto {
@@ -49,7 +49,7 @@ class PollRepositoryImpl(
                 question = pollEntity.question
             )
             pollMapper.map(pollEntity).also { pollDto ->
-                fileProvider.saveFile("questions_${pollDto.id}", pollDto.question.toByteArray())
+                fileProvider.uploadFile("question_${pollDto.id}.txt", pollDto.question.toByteArray())
                 cache.putPoll(pollDto.id, pollDto)
             }
         }

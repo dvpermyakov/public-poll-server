@@ -69,6 +69,8 @@ dependencies {
 
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
 
+    implementation "com.google.cloud:google-cloud-storage:$cloud_storage_verion"
+
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "io.mockk:mockk:$mockk_version"
 }
