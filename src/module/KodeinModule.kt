@@ -4,8 +4,10 @@ import com.public.poll.cache.Cache
 import com.public.poll.cache.CacheImpl
 import com.public.poll.client.HttpClientProvider
 import com.public.poll.client.HttpClientProviderImpl
-import com.public.poll.files.FileProvider
-import com.public.poll.files.FileProviderImpl
+import com.public.poll.files.FileUploader
+import com.public.poll.files.FileUploaderImpl
+import com.public.poll.files.StorageServiceProvider
+import com.public.poll.files.StorageServiceProviderImpl
 import com.public.poll.handler.auth.SignInHandler
 import com.public.poll.handler.auth.SignUpHandler
 import com.public.poll.handler.poll.action.PollApproveHandler
@@ -19,7 +21,6 @@ import com.public.poll.handler.poll.crud.PollSearchHandler
 import com.public.poll.handler.poll.list.PollFeedHandler
 import com.public.poll.handler.poll.list.PollHistoryHandler
 import com.public.poll.handler.poll.list.PollMyListHandler
-import com.public.poll.handler.user.RetrieveAvatarHandler
 import com.public.poll.handler.user.UploadAvatarHandler
 import com.public.poll.mapper.PollMapper
 import com.public.poll.mapper.PollMapperImpl
@@ -40,7 +41,8 @@ fun Application.kodeinModule() = Kodein {
     bind<Logger>() with singleton { log }
     bind<HttpClientProvider>() with singleton { HttpClientProviderImpl() }
     bind<Cache>() with singleton { CacheImpl() }
-    bind<FileProvider>() with singleton { FileProviderImpl() }
+    bind<StorageServiceProvider>() with singleton { StorageServiceProviderImpl() }
+    bind<FileUploader>() with singleton { FileUploaderImpl(instance()) }
     bind<Producer>() with singleton { ProducerImpl() }
 
     bind<UserMapper>() with singleton { UserMapperImpl() }
@@ -74,5 +76,4 @@ fun Application.kodeinModule() = Kodein {
     bind<PollApproveHandler>() with provider { PollApproveHandler(instance()) }
     bind<PollSearchHandler>() with provider { PollSearchHandler(instance()) }
     bind<UploadAvatarHandler>() with provider { UploadAvatarHandler(instance()) }
-    bind<RetrieveAvatarHandler>() with provider { RetrieveAvatarHandler(instance()) }
 }
