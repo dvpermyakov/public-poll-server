@@ -13,7 +13,11 @@ class UploadAvatarHandler(private val fileUploader: FileUploader) {
         inputStream: InputStream,
         fileName: String?
     ): CommonResponse {
-        val imagePath = fileUploader.uploadFile("${userDto.id}/$fileName", inputStream.readBytes())
+        val imagePath = fileUploader.uploadFile(
+            name = "${userDto.id}/$fileName",
+            data = inputStream.readBytes(),
+            contentType = "image"
+        )
         return UploadDto(image = imagePath).toResponse()
     }
 }
