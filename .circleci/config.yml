@@ -59,10 +59,14 @@ jobs:
           name: Push Docker image
           command: |
             export VERSION=`cat version.txt`
-            docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              docker push $DOCKER_IMAGE_INSTANCE/$DOCKER_IMAGE_NAME:$VERSION
+            fi
       - run:
           name: Create new Cloud Run image
           command: |
             export VERSION=`cat version.txt`
             chmod u+x ./cloud-run-deploy.sh
-            ./cloud-run-deploy.sh
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              ./cloud-run-deploy.sh
+            fi
