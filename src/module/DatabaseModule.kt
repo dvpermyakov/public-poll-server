@@ -14,13 +14,18 @@ fun databaseModule() {
     val connProps = Properties().apply {
         setProperty("user", System.getenv("SQL_DATABASE_USER"))
         setProperty("password", System.getenv("SQL_DATABASE_PASSWORD"))
-        setProperty("cloudSqlInstance", System.getenv("SQL_DATABASE_INSTANCE"))
-        setProperty("sslmode", "disable")
-        setProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory")
-        setProperty("enableIamAuth", "true")
     }
+    val socketFactory = System.getenv("SQL_DATABASE_SOCKET_FACTORY")
+    if (socketFactory.isNotBlank()) {
+        connProps.setProperty("socketFactory", socketFactory)
+        connProps.setProperty("cloudSqlInstance", System.getenv("SQL_DATABASE_CLOUD_INSTANCE"))
+        connProps.setProperty("sslmode", "disable")
+        connProps.setProperty("enableIamAuth", "true")
+    }
+    val databaseHost = System.getenv("SQL_DATABASE_HOST")
+    val databaseName = System.getenv("SQL_DATABASE_NAME")
     val config = HikariConfig().apply {
-        jdbcUrl = "jdbc:postgresql:///testdb"
+        jdbcUrl = "jdbc:postgresql://$databaseHost/$databaseName"
         dataSourceProperties = connProps
         connectionTimeout = 10000 // 10s
     }

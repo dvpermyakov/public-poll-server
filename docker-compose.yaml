@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  sql_db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  redis:
+    image: bitnami/redis:latest
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  application:
+    build:
+      context: .
+      args:
+        VERSION: 0.0.6
+    restart: "no"
+    container_name: application
+    ports:
+      - "8080:8080"
+    environment:
+      - SQL_DATABASE_USER=root
+      - SQL_DATABASE_PASSWORD=password
+      - SQL_DATABASE_HOST=sql_db
+      - SQL_DATABASE_NAME=testdb
+      - SQL_DATABASE_SOCKET_FACTORY=
+      - SQL_DATABASE_CLOUD_INSTANCE=
+      - KAFKA_DATABASE_INSTANCE=kafka:9092
+      - KAFKA_DATABASE_USER=
+      - KAFKA_DATABASE_PASSWORD=
+      - REDIS_IP_ADDRESS=redis
+      - ELASTIC_INSTANCE_URL=http://elasticsearch:9200
+      - ELASTIC_AUTH_BASIC_TOKEN=
+      - STORAGE_SERVICE_BUCKET_NAME=
+      - STORAGE_SERVICE_PROJECT_ID=
+    depends_on:
+      - "sql_db"
+      - "kafka"
+      - "redis"
+      - "elasticsearch"

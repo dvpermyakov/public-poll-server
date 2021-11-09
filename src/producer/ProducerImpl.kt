@@ -17,18 +17,22 @@ class ProducerImpl : Producer {
     private fun getProducer(): KafkaProducer<String, String> {
         val properties = Properties().apply {
             setProperty("bootstrap.servers", System.getenv("KAFKA_DATABASE_INSTANCE"))
-            setProperty("security.protocol", "SASL_SSL")
-            setProperty(
-                "sasl.jaas.config",
-                "org.apache.kafka.common.security.plain.PlainLoginModule " +
-                        "required username='${System.getenv("KAFKA_DATABASE_USER")}' " +
-                        "password='${System.getenv("KAFKA_DATABASE_PASSWORD")}';"
-            )
-            setProperty("sasl.mechanism", "PLAIN")
             setProperty("client.dns.lookup", "use_all_dns_ips")
             setProperty(ProducerConfig.ACKS_CONFIG, "all")
             setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.qualifiedName)
             setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.qualifiedName)
+        }
+        val databaseUser = System.getenv("KAFKA_DATABASE_USER")
+        val databasePass = System.getenv("KAFKA_DATABASE_PASSWORD")
+        if (databaseUser.isNotBlank() && databasePass.isNotBlank()) {
+            properties.setProperty("security.protocol", "SASL_SSL")
+            properties.setProperty(
+                "sasl.jaas.config",
+                "org.apache.kafka.common.security.plain.PlainLoginModule " +
+                        "required username='$databaseUser' " +
+                        "password='$databasePass';"
+            )
+            properties.setProperty("sasl.mechanism", "PLAIN")
         }
 
         return KafkaProducer<String, String>(properties)
