@@ -50,13 +50,7 @@ fun Application.kodeinModule() = Kodein {
 
     bind<UserRepository>() with singleton { UserRepositoryImpl(instance()) }
     bind<PollRepository>() with singleton {
-        PollRepositoryImpl(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
+        PollRepositoryImpl(instance(), instance(), instance(), instance())
     }
     bind<PollCollectionRepository>() with singleton { PollCollectionRepositoryImpl(instance()) }
     bind<PollSearchRepository>() with singleton { PollSearchRepositoryImpl(instance(), instance()) }
